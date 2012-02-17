@@ -42,7 +42,7 @@ EchoCheck = {
 		if (maxfamiliarity)
 			inputdata.max_familiarity = maxfamiliarity;
 		if (startyear)
-			inputdata.artist_start_year_after = startyear;
+			inputdata.artist_end_year_after = startyear;
 		if (endyear)
 			inputdata.artist_start_year_before = endyear;
 		if (sortby)
@@ -158,22 +158,8 @@ Output = {
 		artistrowtext += '<ul data-role="listview">';
 		artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
 		this.artistDetail[name].terms = terms;
-		// artistrowtext += '<li>Terms<ul>';
-		// for (var j in terms)
-		// 	artistrowtext += '<li><a href="#">' + terms[j] + '</a></li>';
-		// artistrowtext += '</ul></li></ul></div>';
 		artistrowtext += '</ul></div>';
 		this.artistRows.push(artistrowtext);
-		// var termssections = $(termssectionstr);
-		// rowdetails.append(readonlyinfo).append(termssections);
-		// corerow.append(rowdetails);
-		// this.artistRows.push(corerow);
-		// this.content.append(corerow).trigger('create');
-		// console.log('just appended row',corerow);
-		// var ref = termssections.find('.ui-link-inherit').attr('href').replace('#','');
-		// var termspage = $('div[data-url="' + ref + '"]');
-		// termspage.find('.ui-title').text(name + ': ' + 'Terms');
-
 	},
 	addArtistsToPage: function(artists)
 	{
@@ -228,6 +214,12 @@ Output = {
 		if (!artistrow.length) return;
 		var list = artistrow.find('.ui-collapsible-content > .ui-listview');
 		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
+	},
+	clearCheckboxesPage: function(pageid)
+	{
+		var checkeditems = $('#' + pageid).find('input').filter(':checked');
+		checkeditems.prop('checked',false).checkboxradio('refresh');
+		$('#browse-' + pageid).find('.ui-btn-text').text('-');
 	},
 	// changes all focus of the output factory to this new page object element
 	setOutputToPage: function(page)
@@ -285,6 +277,11 @@ EventHandler = {
 							$(document).on('pageinit.temppage','#' + termspageid,function()
 							{
 								$.mobile.changePage('#' + termspageid);
+								// add event handlers for terms
+								$('#' + termspageid).on('click','li',function()
+								{
+									$('#browse-terms').val(jQuery.trim($(this).text()));
+								});
 								$(document).unbind('pageinit.temppage');
 							});
 							Output.addNewPage(termspageid,lookupname + ' terms','terms');
@@ -292,9 +289,10 @@ EventHandler = {
 							var termstext = '<ul data-role="listview">';
 							for (var i = 0; i < detail.terms.length; i++)
 							{
-								termstext += '<li><a href="#">' + detail.terms[i] + '</a></li>';
+								termstext += '<li><a href="#browse">' + detail.terms[i] + '</a></li>';
 							}
 							termstext += '</ul>';
+							console.log('terms',termstext);
 							Output.content.append(termstext).trigger('create');
 						}
 						else
@@ -357,7 +355,7 @@ EventHandler = {
 			var checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
 			var textcontainer = $('#browse-' + pageid).find('.ui-btn-text');
 			var text = jQuery.trim(textcontainer.text());
-			console.log(textcontainer,text);
+			console.log(textcontainer,text,this,this.checked);
 			if (this.checked)
 			{
 				if (text == '-')

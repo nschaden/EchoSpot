@@ -3,9 +3,17 @@
 */
 
 $(document).bind("mobileinit", function(){
+	// for hash tags that don't fall in the proper starting area, change and reload
+	console.log('starting href',document.location.href,document.location.href.split('#'));
+	var splithref = document.location.href.split('#');
+	if (splithref.length > 1 && splithref[1] != 'top' && splithref[1] != 'browse')
+	{
+		document.location.href = splithref[0] + '#browse';
+	}
+
 	$.mobile.page.prototype.options.addBackBtn = true;
-		$.mobile.touchOverflowEnabled = true;
-		$.support.touchOverflow = true;
+	$.mobile.touchOverflowEnabled = true;
+	$.support.touchOverflow = true;
 });
 $(document).on('pageinit.browse','#browse',function()
 {
@@ -21,6 +29,23 @@ $(document).on('pageinit.browse','#browse',function()
 			Output.setOutputToPage($('#moods'));
 			Output.addCheckboxesToPage(res.terms);
 		});
+	});
+
+	$('#browse').find('input.reset').on('click',function()
+	{	
+		Output.clearCheckboxesPage('styles');
+		Output.clearCheckboxesPage('moods');
+		$('#browse-startyear')[0].selectedIndex = 0;
+		$('#browse-startyear').selectmenu('refresh');
+		$('#browse-endyear')[0].selectedIndex = 0;
+		$('#browse-endyear').selectmenu('refresh');
+		$('#browse-terms').val('');
+		$('#browse-hotness')[0].selectedIndex = 0;
+		$('#browse-hotness').selectmenu('refresh');
+		$('#browse-familiarity')[0].selectedIndex = 0;
+		$('#browse-familiarity').selectmenu('refresh');
+		$('#browse-sortby')[0].selectedIndex = 0;
+		$('#browse-sortby').selectmenu('refresh');
 	});
 	
 	$('#browse').find('input.submit').on('click',function()
