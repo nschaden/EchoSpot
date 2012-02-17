@@ -33,6 +33,7 @@ $(document).on('pageinit.browse','#browse',function()
 
 	$('#browse').find('input.reset').on('click',function()
 	{	
+		$('#browse-artist').val('');
 		Output.clearCheckboxesPage('styles');
 		Output.clearCheckboxesPage('moods');
 		$('#browse-startyear')[0].selectedIndex = 0;
@@ -60,6 +61,8 @@ $(document).on('pageinit.browse','#browse',function()
 			EventHandler.addArtistMenusFunctionality(Output.content);
 		$.mobile.changePage('#browse_results');
 		var browsepage = $('#browse');
+		var artist = jQuery.trim($('#browse-artist').val());
+	
 		var styles = $('#browse-styles').find('.ui-btn-text').text().replace('-','');
 		var moods = $('#browse-moods').find('.ui-btn-text').text().replace('-','');
 		var startyear = $('#browse-startyear').val();
@@ -112,7 +115,7 @@ $(document).on('pageinit.browse','#browse',function()
 		else
 			sortby = 'familiarity-desc';
 		EventHandler.addArtistMenusFunctionality(Output.content);
-		EchoCheck.findArtists(styles,moods,description,hotnessmininput,hotnessmaxinput,familiaritymininput,familiaritymaxinput,startyear,endyear,sortby,function(res)
+		EchoCheck.findArtists(artist,styles,moods,description,hotnessmininput,hotnessmaxinput,familiaritymininput,familiaritymaxinput,startyear,endyear,sortby,function(res)
 		{
 			Output.addArtistsToPage(res.artists);
 

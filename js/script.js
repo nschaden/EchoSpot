@@ -4,6 +4,17 @@
 EchoCheck = {
 	api: 'PWNYOEPUNHQTGZLHY',
 	base: 'http://developer.echonest.com/api/v4/',
+	callJSON: function(url,inputdata,callback)
+	{
+		$.getJSON(url,inputdata,function(data)
+		{
+			if (EchoCheck.checkResponse(data))
+			{
+				if (typeof callback == 'function')
+					callback(data.response);
+			}
+		});
+	},
 	checkResponse: function(data)
 	{
 		if (data.response) 
@@ -23,39 +34,39 @@ EchoCheck = {
 	    }
 	    return false;	
 	},
-	findArtists: function(styles,moods,description,minhotness,maxhotness,minfamiliarity,maxfamiliarity,startyear,endyear,sortby,callback)
+	findArtists: function(artist,styles,moods,description,minhotness,maxhotness,minfamiliarity,maxfamiliarity,startyear,endyear,sortby,callback)
 	{
 		var url = this.base + 'artist/search?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
 		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
-		if (styles)
-			inputdata.style = styles;
-		if (moods)
-			inputdata.mood = moods;
-		if (description)
-			inputdata.description = description;
-		if (minhotness)
-			inputdata.min_hotttnesss = minhotness;
-		if (maxhotness)
-			inputdata.max_hotttnesss = maxhotness;	
-		if (minfamiliarity)
-			inputdata.min_familiarity = minfamiliarity;
-		if (maxfamiliarity)
-			inputdata.max_familiarity = maxfamiliarity;
-		if (startyear)
-			inputdata.artist_end_year_after = startyear;
-		if (endyear)
-			inputdata.artist_start_year_before = endyear;
-		if (sortby)
-			inputdata.sort = sortby;
-		console.log('submitting',inputdata);
-		$.getJSON(url,inputdata,function(data)
+		if (artist)
 		{
-			if (EchoCheck.checkResponse(data))
-			{
-				if (typeof callback == 'function')
-					callback(data.response);
-			}
-		});
+			delete inputdata.min_hotttnesss;
+			inputdata.name = artist;
+		}
+		else {
+			if (styles)
+				inputdata.style = styles;
+			if (moods)
+				inputdata.mood = moods;
+			if (description)
+				inputdata.description = description;
+			if (minhotness)
+				inputdata.min_hotttnesss = minhotness;
+			if (maxhotness)
+				inputdata.max_hotttnesss = maxhotness;	
+			if (minfamiliarity)
+				inputdata.min_familiarity = minfamiliarity;
+			if (maxfamiliarity)
+				inputdata.max_familiarity = maxfamiliarity;
+			if (startyear)
+				inputdata.artist_end_year_after = startyear;
+			if (endyear)
+				inputdata.artist_start_year_before = endyear;
+			if (sortby)
+				inputdata.sort = sortby;
+		}
+		console.log('submitting',inputdata);
+		this.callJSON(url,inputdata,callback);
 	},
 	findRelatedArtists: function(artistnameorid,namemode,callback)
 	{
@@ -66,42 +77,20 @@ EchoCheck = {
 			inputdata.name = artistnameorid;
 		else
 			inputdata.id = artistnameorid;
-		$.getJSON(url,inputdata,function(data)
-		{
-			if (EchoCheck.checkResponse(data))
-			{
-				if (typeof callback == 'function')
-					callback(data.response);
-			}
-		});
+		this.callJSON(url,inputdata,callback);
 	},
 	fetchTopTerms: function(findmood,callback)
 	{
 		if (typeof findmood != 'boolean' && typeof findmood != 'undefined') return;
 		var url = this.base + 'artist/list_terms?callback=?';
 		var searchtype = (findmood) ? 'mood' : 'style';
-		$.getJSON(url,{'format':'jsonp','api_key':this.api,'type':searchtype},function(data)
-		{
-			if (EchoCheck.checkResponse(data))
-			{
-				if (typeof callback == 'function')
-					callback(data.response);
-			}
-		});
+		this.callJSON(url,{'format':'jsonp','api_key':this.api,'type':searchtype},callback);
 	},
 	fetchTopHotArtists: function(results,callback)
 	{
 		if (typeof results != 'number') return;
 		var url = this.base + 'artist/top_hottt?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
-		$.getJSON(url,{'format':'jsonp','api_key':this.api,'results': results},function(data)
-		{
-			if (EchoCheck.checkResponse(data))
-			{
-				if (typeof callback == 'function')
-					callback(data.response);
-			}
-
-		});
+		this.callJSON(url,{'format':'jsonp','api_key':this.api,'results': results},callback);
 	}		
 };
 SpotCheck = {
