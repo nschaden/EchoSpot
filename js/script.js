@@ -34,40 +34,6 @@ EchoCheck = {
 	    }
 	    return false;	
 	},
-	findArtists: function(artist,styles,moods,description,minhotness,maxhotness,minfamiliarity,maxfamiliarity,startyear,endyear,sortby,callback)
-	{
-		var url = this.base + 'artist/search?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
-		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
-		if (artist)
-		{
-			delete inputdata.min_hotttnesss;
-			inputdata.name = artist;
-		}
-		else {
-			if (styles)
-				inputdata.style = styles;
-			if (moods)
-				inputdata.mood = moods;
-			if (description)
-				inputdata.description = description;
-			if (minhotness)
-				inputdata.min_hotttnesss = minhotness;
-			if (maxhotness)
-				inputdata.max_hotttnesss = maxhotness;	
-			if (minfamiliarity)
-				inputdata.min_familiarity = minfamiliarity;
-			if (maxfamiliarity)
-				inputdata.max_familiarity = maxfamiliarity;
-			if (startyear)
-				inputdata.artist_end_year_after = startyear;
-			if (endyear)
-				inputdata.artist_start_year_before = endyear;
-			if (sortby)
-				inputdata.sort = sortby;
-		}
-		console.log('submitting',inputdata);
-		this.callJSON(url,inputdata,callback);
-	},
 	findRelatedArtists: function(artistnameorid,namemode,callback)
 	{
 		if (typeof artistnameorid != 'string') return;
@@ -91,6 +57,72 @@ EchoCheck = {
 		if (typeof results != 'number') return;
 		var url = this.base + 'artist/top_hottt?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
 		this.callJSON(url,{'format':'jsonp','api_key':this.api,'results': results},callback);
+	},
+	powerSearch: function(mode,options,callback)
+	{
+		if (typeof mode != 'string' || typeof options != 'object') return;
+		var url = this.base + 'artist/search/?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
+		if (mode == 'song')
+			url = this.base + 'song/search/?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+		else if (mode == 'playlist')
+			url = this.base + 'playlist/search/?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
+		if (options.artist)
+		{
+			delete inputdata.min_hotttnesss;
+			inputdata.name = options.artist;
+		}
+		else {
+			if (mode == 'song' && options.combined)
+				inputdata.combined = options.combined;
+			if (options.styles)
+				inputdata.style = options.styles;
+			if (options.moods)
+				inputdata.mood = options.moods;
+			if (options.description)
+				inputdata.description = options.description;
+			if (mode == 'song')
+			{
+				delete inputdata.min_hotttnesss;
+				if (options.minhotness)
+					inputdata.song_min_hotttnesss = options.minhotness;
+				if (options.maxhotness)
+					inputdata.song_max_hotttnesss = options.maxhotness;
+			}
+			else
+			{
+				if (options.minhotness)
+					inputdata.min_hotttnesss = options.minhotness;
+				if (options.maxhotness)
+					inputdata.max_hotttnesss = options.maxhotness;		
+			}
+			if (mode == 'song')
+			{
+				if (options.minfamiliarity)
+					inputdata.artist_min_familiarity = options.minfamiliarity;
+				if (options.maxfamiliarity)
+					inputdata.artist_max_familiarity = options.maxfamiliarity;					
+			}
+			else
+			{
+				if (options.minfamiliarity)
+					inputdata.min_familiarity = options.minfamiliarity;
+				if (options.maxfamiliarity)
+					inputdata.max_familiarity = options.maxfamiliarity;				
+			}
+			if (options.startyear)
+				inputdata.artist_end_year_after = options.startyear;
+			if (options.endyear)
+				inputdata.artist_start_year_before = options.endyear;
+			if (mode == 'song')
+			{
+				inputdata.sort = 'song_hotttnesss-desc';					
+			}
+			if (options.sortby)
+				inputdata.sort = options.sortby;
+		}
+		console.log('submitting',inputdata);
+		this.callJSON(url,inputdata,callback);
 	}		
 };
 SpotCheck = {
@@ -112,43 +144,30 @@ SpotCheck = {
 
 Output = {
 	artistDetail: {},
-	artistRows: [],
 	colorSpectrumLength: 10,
 	colorSpectrumIndex: 0,
 	content: null,
 	contentId: '',
+	contentRows: [],
 	footerContent: '<div class="footer" data-id="footer" data-position="fixed" data-role="footer"><div data-role="navbar" data-iconpos="top"><ul>' +
 					'<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>' +
 					'<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>' +
 					'</ul></div></div>',
+	songDetail: {},
 	addRow: function(text)
 	{
 		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
 		this.content.append('<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + text + '</h3></div>').trigger('create');
 		this.colorSpectrumLengthIndex++;
 	},
-	// takes currently cached artist rows, dumps all into content area at once
-	addArtistRows: function(content)
+	// takes currently cached rows of content (artists or songs), dumps all into content area at once
+	addContentRows: function(content)
 	{
 		if (!content)
-			this.content.append(this.artistRows.join('')).trigger('create');
+			this.content.append(this.contentRows.join('')).trigger('create');
 		else
-			content.append(this.artistRows.join('')).trigger('create');
-		this.artistRows = [];
-	},
-	saveArtistRow: function(name,hotness,familiarity,terms)
-	{
-		var artistrowtext;
-		// header
-		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-		artistrowtext = '<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + name + '</h3>';
-		this.colorSpectrumIndex++;
-		// row details
-		artistrowtext += '<ul data-role="listview">';
-		artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
-		this.artistDetail[name].terms = terms;
-		artistrowtext += '</ul></div>';
-		this.artistRows.push(artistrowtext);
+			content.append(this.contentRows.join('')).trigger('create');
+		this.contentRows = [];
 	},
 	addArtistsToPage: function(artists)
 	{
@@ -171,7 +190,7 @@ Output = {
 			Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms);
 		}
 		console.log('init artist rows');
-		Output.addArtistRows();
+		Output.addContentRows();
 	},
 	addCheckboxesToPage: function(checkboxitems)
 	{
@@ -196,6 +215,27 @@ Output = {
 		$('body').append(emptypagetext);
 		$('#' + id).page();
 	},
+	addSongsToPage: function(songs)
+	{
+		for (var i = 0; i < songs.length; i++)
+		{
+			var currsong = songs[i];
+			var existingdetail = Output.songDetail[currsong.title];
+			if (typeof existingdetail == 'undefined')
+			{
+				Output.songDetail[currsong.name] = {echoartistid:currsong.artist_id,echosongid:currsong.id,spotlink:null};
+				existingdetail = Output.songDetail[currsong.name];
+			}
+			else
+			{
+				existingdetail.id = currsong.id;
+				existingdetail.artist_id = currsong.artist_id;
+			}
+			existingdetail[this.contentId + '_order'] = i;
+			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_familiarity);
+		}
+		Output.addContentRows();	
+	},
 	// note artist position is zero indexed
 	addSpotifyLinkToArtistRow: function(link,artistpos)
 	{
@@ -209,6 +249,33 @@ Output = {
 		var checkeditems = $('#' + pageid).find('input').filter(':checked');
 		checkeditems.prop('checked',false).checkboxradio('refresh');
 		$('#browse-' + pageid).find('.ui-btn-text').text('-');
+	},
+	saveArtistRow: function(name,hotness,familiarity,terms)
+	{
+		var artistrowtext;
+		// header
+		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
+		artistrowtext = '<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + name + '</h3>';
+		this.colorSpectrumIndex++;
+		// row details
+		artistrowtext += '<ul data-role="listview">';
+		artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
+		this.artistDetail[name].terms = terms;
+		artistrowtext += '</ul></div>';
+		this.contentRows.push(artistrowtext);
+	},
+	saveSongRow: function(title,artistname,hotness,familiarity)
+	{
+		var songrowtext;
+		// header
+		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
+		songrowtext = '<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
+		this.colorSpectrumIndex++;
+		// row details
+		songrowtext += '<ul data-role="listview">';
+		songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
+		songrowtext += '</ul></div>';
+		this.contentRows.push(songrowtext);
 	},
 	// changes all focus of the output factory to this new page object element
 	setOutputToPage: function(page)

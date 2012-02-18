@@ -36,6 +36,17 @@
 		</div>
 		<div data-role="content">
 			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup" data-type="horizontal">
+					<legend>Search for</legend>
+					<input type="radio" name="browse-by" id="browse-byartist" value="byartist" checked="checked" />
+         			<label for="browse-byartist">Artist</label>
+         			<input type="radio" name="browse-by" id="browse-bysong" value="bysong" />
+         			<label for="browse-bysong">Song</label>
+         			<input type="radio" name="browse-by" id="browse-byplaylist" value="byplaylist" />
+         			<label for="browse-byplaylist">Playlist</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
 				<label for="name">Artist</label>
 				<input type="text" name="artist" id="browse-artist" value=""  />
 			</div>

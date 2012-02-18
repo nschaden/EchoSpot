@@ -61,78 +61,127 @@ $(document).on('pageinit.browse','#browse',function()
 			EventHandler.addArtistMenusFunctionality(Output.content);
 		$.mobile.changePage('#browse_results');
 		var browsepage = $('#browse');
-		var artist = jQuery.trim($('#browse-artist').val());
+		var mode = 'artist';
+		var modeselect = $('input[name="browse-by"]:checked').val();
+		if (modeselect == 'bysong')
+			mode = 'song';
+		if (modeselect == 'byplaylist')
+			mode = 'playlist';
+		var options = {};
+		if (mode == 'song')
+		{
+			options.combined = jQuery.trim($('#browse-artist').val());
+		}
+		else
+		{
+			options.artist = jQuery.trim($('#browse-artist').val());
+		}
+		
 	
-		var styles = $('#browse-styles').find('.ui-btn-text').text().replace('-','');
-		var moods = $('#browse-moods').find('.ui-btn-text').text().replace('-','');
-		var startyear = $('#browse-startyear').val();
-		if (startyear == 'Start Year')
-			startyear = null;
+		options.styles = $('#browse-styles').find('.ui-btn-text').text().replace('-','');
+		options.moods = $('#browse-moods').find('.ui-btn-text').text().replace('-','');
+		options.startyear = $('#browse-startyear').val();
+		if (options.startyear == 'Start Year')
+			options.startyear = null;
 		else
-			startyear = parseInt(startyear,10)-1;
-		var endyear = $('#browse-endyear').val();
-		if (endyear == 'End Year')
-			endyear = null;
+			options.startyear = parseInt(options.startyear,10)-1;
+		options.endyear = $('#browse-endyear').val();
+		if (options.endyear == 'End Year')
+			options.endyear = null;
 		else
-			endyear = parseInt(endyear,10)+1;
-		var description = jQuery.trim($('#browse-terms').val());
+			options.endyear = parseInt(options.endyear,10)+1;
+		options.description = jQuery.trim($('#browse-terms').val());
 		var hotness = $('#browse-hotness').val();
-		var hotnessmininput = 0;
-		var hotnessmaxinput = 1;
+		options.hotnessmininput = 0;
+		options.hotnessmaxinput = 1;
 		console.log('hotness',hotness);
 		if (hotness == 'high')
 		{
-			hotnessmininput = 0.7;
+			options.hotnessmininput = 0.7;
 		}
 		if (hotness == 'average')
 		{
-			hotnessmininput = 0.3;
-			hotnessmaxinput = 0.7;
+			options.hotnessmininput = 0.3;
+			options.hotnessmaxinput = 0.7;
 		}
 		if (hotness == 'low')
 		{
-			hotnessmaxinput = 0.3;
+			options.hotnessmaxinput = 0.3;
 		}
 		var familiarity = $('#browse-familiarity').val();
-		var familiaritymininput = 0;
-		var familiaritymaxinput = 1;
+		options.familiaritymininput = 0;
+		options.familiaritymaxinput = 1;
 		if (familiarity == 'wellknown')
 		{
-			familiaritymininput = 0.7;
+			options.familiaritymininput = 0.7;
 		}
 		if (familiarity == 'average')
 		{
-			familiaritymininput = 0.3;
-			familiaritymaxinput = 0.7;
+			options.familiaritymininput = 0.3;
+			options.familiaritymaxinput = 0.7;
 		}
 		if (familiarity == 'obscure')
 		{
-			familiaritymaxinput = 0.3;
+			options.familiaritymaxinput = 0.3;
 		}
-		var sortby = $('#browse-sortby').val();
-		if (sortby == 'hotness')
-			sortby = 'hotttnesss-desc';
-		else
-			sortby = 'familiarity-desc';
-		EventHandler.addArtistMenusFunctionality(Output.content);
-		EchoCheck.findArtists(artist,styles,moods,description,hotnessmininput,hotnessmaxinput,familiaritymininput,familiaritymaxinput,startyear,endyear,sortby,function(res)
+		options.sortby = $('#browse-sortby').val();
+		if (mode == 'song')
 		{
-			Output.addArtistsToPage(res.artists);
-
-			// fetch artist references from spotify
-			for (i = 0; i < res.artists.length; i++)
+			if (options.sortby == 'hotness')
+				options.sortby = 'artist_familiarity-desc';
+			else
+				options.sortby = 'familiarity-desc';
+		}
+		else
+		{
+			if (options.sortby == 'hotness')
+				options.sortby = 'hotttnesss-desc';
+			else
+				options.sortby = 'familiarity-desc';	
+		}
+		EventHandler.addArtistMenusFunctionality(Output.content);
+		EchoCheck.powerSearch(mode,options,function(res)
+		{
+			console.log('got search response',res);
+			if (mode == 'artist')
 			{
-				currartist = res.artists[i];
-				SpotCheck.getArtistId(currartist.name,function(href,name)
+				Output.addArtistsToPage(res.artists);
+
+				// fetch artist references from spotify
+				for (i = 0; i < res.artists.length; i++)
 				{
-					// based on response, find position, insert accordingly
-					var ref = Output.artistDetail[name];
-					if (typeof ref == 'object')
+					currartist = res.artists[i];
+					SpotCheck.getArtistId(currartist.name,function(href,name)
 					{
-						ref.spotlink = href;
-						Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
-					}
-				});
+						// based on response, find position, insert accordingly
+						var ref = Output.artistDetail[name];
+						if (typeof ref == 'object')
+						{
+							ref.spotlink = href;
+							Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
+						}
+					});
+				}
+			}
+			else if (mode == 'song')
+			{
+				Output.addSongsToPage(res.songs);
+
+				// fetch artist references from spotify
+				// for (i = 0; i < res.artists.length; i++)
+				// {
+				// 	currartist = res.artists[i];
+				// 	SpotCheck.getArtistId(currartist.name,function(href,name)
+				// 	{
+				// 		// based on response, find position, insert accordingly
+				// 		var ref = Output.artistDetail[name];
+				// 		if (typeof ref == 'object')
+				// 		{
+				// 			ref.spotlink = href;
+				// 			Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
+				// 		}
+				// 	});
+				// }
 			}
 			Output.content.trigger('create');
 		});
