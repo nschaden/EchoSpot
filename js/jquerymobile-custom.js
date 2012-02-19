@@ -18,13 +18,11 @@ $(document).on('pageinit.browse','#browse',function()
 {
 	EchoCheck.fetchTopTerms(false,function(res)
 	{
-		console.log('style results',res);
 		Output.setOutputToPage($('#styles'));
 		Output.addCheckboxesToPage(res.terms);
 
 		EchoCheck.fetchTopTerms(true,function(res)
 		{
-			console.log('moods results',res);
 			Output.setOutputToPage($('#moods'));
 			Output.addCheckboxesToPage(res.terms);
 		});
@@ -295,7 +293,6 @@ $(document).on('pageinit.browse','#browse',function()
 		EventHandler.addArtistMenusFunctionality(Output.content);
 		EchoCheck.powerSearch(mode,options,function(res)
 		{
-			console.log('got search response',res);
 			if (mode == 'artist')
 			{
 				Output.addArtistsToPage(res.artists);
@@ -304,7 +301,7 @@ $(document).on('pageinit.browse','#browse',function()
 				for (i = 0; i < res.artists.length; i++)
 				{
 					currartist = res.artists[i];
-					SpotCheck.getArtistId(currartist.name,function(href,name)
+					SpotCheck.getArtistLink(currartist.name,function(href,name)
 					{
 						// based on response, find position, insert accordingly
 						var ref = Output.artistDetail[name];
@@ -320,21 +317,24 @@ $(document).on('pageinit.browse','#browse',function()
 			{
 				Output.addSongsToPage(res.songs);
 
-				// fetch artist references from spotify
-				// for (i = 0; i < res.artists.length; i++)
-				// {
-				// 	currartist = res.artists[i];
-				// 	SpotCheck.getArtistId(currartist.name,function(href,name)
-				// 	{
-				// 		// based on response, find position, insert accordingly
-				// 		var ref = Output.artistDetail[name];
-				// 		if (typeof ref == 'object')
-				// 		{
-				// 			ref.spotlink = href;
-				// 			Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
-				// 		}
-				// 	});
-				// }
+				// fetch track references from spotify
+				for (i = 0; i < res.songs.length; i++)
+				{
+					currsong = res.songs[i];
+					SpotCheck.getTrackLink(currsong.title,currsong.artist_name,function(href,trackname)
+					{
+						// based on response, find position, insert accordingly
+						if (href != false)
+						{
+							var ref = Output.songDetail[trackname];
+							if (typeof ref == 'object')
+							{
+								ref.spotlink = href;
+								Output.addSpotifyLinkToSongRow(href,ref[Output.contentId + '_order']);
+							}	
+						}
+					});
+				}
 			}
 			Output.content.trigger('create');
 		});
@@ -344,7 +344,6 @@ $(document).on('pageinit.browse','#browse',function()
 	if (Modernizr.sessionstorage)
 	{
 		var startsetting = sessionStorage.getItem('startbrowsesetting');
-		console.log('here is start setting',startsetting);
 		if (startsetting == 'song')
 		{
 			$('#browse-byartist').prop('checked',false);
@@ -389,26 +388,13 @@ $(document).on('pageinit.top','#top',function()
 	// fetch artists from echonest
 	EchoCheck.fetchTopHotArtists(40,function(res)
 	{
-		console.log('response',res);
-		// based on response, add top artist details from echonest
-		// for (var i = 0; i < res.artists.length; i++)
-		// {
-		// 	var currartist = res.artists[i];
-		// 	Output.artistDetail[currartist.name] = {echoid:currartist.id,order:i,spotlink:null,terms:null};
-		// 	var currterms = [];
-		// 	for (var j = 0; j < currartist.terms.length; j++)
-		// 		currterms.push(currartist.terms[j].name);
-		// 	Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms);
-		// }
-		// console.log('init artist rows');
-		// Output.addArtistRows();
 		Output.addArtistsToPage(res.artists);
 
 		// fetch artist references from spotify
 		for (i = 0; i < res.artists.length; i++)
 		{
 			currartist = res.artists[i];
-			SpotCheck.getArtistId(currartist.name,function(href,name)
+			SpotCheck.getArtistLink(currartist.name,function(href,name)
 			{
 				// based on response, find position, insert accordingly
 				var ref = Output.artistDetail[name];

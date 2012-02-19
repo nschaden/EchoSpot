@@ -151,13 +151,12 @@ EchoCheck = {
 					inputdata.max_danceability = options.danceabilitymax;
 			}
 		}
-		console.log('submitting',inputdata);
 		this.callJSON(url,inputdata,callback);
 	}		
 };
 SpotCheck = {
 	spotdata: new Spotify.Metadata(),
-	getArtistId: function(artistname,callback)
+	getArtistLink: function(artistname,callback)
 	{
 		var artistnamecheck = artistname.replace(/\&/g,' ');
 		this.spotdata.search({method:'artist',q:encodeURI(artistnamecheck)},function(data)
@@ -168,6 +167,30 @@ SpotCheck = {
 				returnhref = response.artists[0].href;
 			if (typeof callback == 'function')
 				callback(returnhref,artistname);
+		});
+	},
+	getTrackLink: function(trackname,artistname,callback)
+	{
+		var tracknamecheck = trackname.replace(/\&/g,' ');
+		this.spotdata.search({method:'track',q:encodeURI(tracknamecheck)},function(data)
+		{
+			var response = JSON.parse(data);
+			var returnhref = false;
+			if (typeof response.tracks != 'object') return;
+			var gotmatch = false;
+			for (var i = 0; i < response.tracks.length; i++)
+			{
+				var currtrack = response.tracks[i];
+				if (jQuery.trim(trackname.toLowerCase()) == currtrack.name.toLowerCase() && jQuery.trim(artistname.toLowerCase()) == currtrack.artists[0].name.toLowerCase())
+				{
+					gotmatch = true;
+					if (typeof callback == 'function')
+						callback(currtrack.href,trackname);
+					break;
+				}
+			}
+			if (!gotmatch && typeof callback == 'function')
+				callback(false,trackname);
 		});
 	}
 };
@@ -220,7 +243,6 @@ Output = {
 			existingdetail.terms = currterms;
 			Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms);
 		}
-		console.log('init artist rows');
 		Output.addContentRows();
 	},
 	addCheckboxesToPage: function(checkboxitems)
@@ -254,8 +276,8 @@ Output = {
 			var existingdetail = Output.songDetail[currsong.title];
 			if (typeof existingdetail == 'undefined')
 			{
-				Output.songDetail[currsong.name] = {echoartistid:currsong.artist_id,echosongid:currsong.id,spotlink:null};
-				existingdetail = Output.songDetail[currsong.name];
+				Output.songDetail[currsong.title] = {echoartistid:currsong.artist_id,echosongid:currsong.id,spotlink:null};
+				existingdetail = Output.songDetail[currsong.title];
 			}
 			else
 			{
@@ -273,6 +295,13 @@ Output = {
 		var artistrow = this.content.children().eq(artistpos);
 		if (!artistrow.length) return;
 		var list = artistrow.find('.ui-collapsible-content > .ui-listview');
+		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
+	},
+	addSpotifyLinkToSongRow: function(link,songpos)
+	{
+		var songrow = this.content.children().eq(songpos);
+		if (!songrow.length) return;
+		var list = songrow.find('.ui-collapsible-content > .ui-listview');
 		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
 	},
 	clearCheckboxesPage: function(pageid)
@@ -308,7 +337,7 @@ Output = {
 		songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
 		songrowtext += '</ul></div>';
 		this.contentRows.push(songrowtext);
-		this.plainTextContentRows.push(title + ' - ' + artistname);
+		this.plainTextContentRows.push(title + '|' + artistname);
 	},
 	// changes all focus of the output factory to this new page object element
 	setOutputToPage: function(page)
@@ -318,7 +347,10 @@ Output = {
 		if (!newcontent.length) return;
 		this.contentId = page.attr('id');
 		this.contentRows = [];
-		this.plainTextContentRows = [];
+		if (page.attr('id') == 'browse_results')
+			this.plainTextContentRows = ['Track|Artist'];
+		else
+			this.plainTextContentRows = ['Artist'];
 		this.content = newcontent;
 		this.colorSpectrumIndex = 0;
 	}
@@ -354,7 +386,6 @@ EventHandler = {
 						listview.replaceWith(newlisttext);
 						content.trigger('create');	
 						// force new terms pages to have the persist footer
-						console.log('link',listview,listview.find('a.related_link'));
 						// Output.addSpotifyLinkToArtistRow('hello there',detail.order);
 					}
 					// clicking on the terms event handler 
@@ -382,7 +413,6 @@ EventHandler = {
 								termstext += '<li><a href="#browse">' + detail.terms[i] + '</a></li>';
 							}
 							termstext += '</ul>';
-							console.log('terms',termstext);
 							Output.content.append(termstext).trigger('create');
 						}
 						else
@@ -405,13 +435,12 @@ EventHandler = {
 							EventHandler.addArtistMenusFunctionality(Output.content);
 							EchoCheck.findRelatedArtists(detail.echoid,false,function(res)
 							{
-								console.log('related artists callback',res);
 								Output.addArtistsToPage(res.artists);
 								// fetch artist references from spotify
 								for (i = 0; i < res.artists.length; i++)
 								{
 									currartist = res.artists[i];
-									SpotCheck.getArtistId(currartist.name,function(href,name)
+									SpotCheck.getArtistLink(currartist.name,function(href,name)
 									{
 										// based on response, find position, insert accordingly
 										var ref = Output.artistDetail[name];
@@ -445,7 +474,6 @@ EventHandler = {
 			var checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
 			var textcontainer = $('#browse-' + pageid).find('.ui-btn-text');
 			var text = jQuery.trim(textcontainer.text());
-			console.log(textcontainer,text,this,this.checked);
 			if (this.checked)
 			{
 				if (text == '-')
