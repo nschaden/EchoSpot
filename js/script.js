@@ -61,13 +61,13 @@ EchoCheck = {
 	powerSearch: function(mode,options,callback)
 	{
 		if (typeof mode != 'string' || typeof options != 'object') return;
-		var url = this.base + 'artist/search/?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
+		var url = this.base + 'artist/search?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
 		if (mode == 'song')
-			url = this.base + 'song/search/?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'song/search?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
 		else if (mode == 'playlist')
-			url = this.base + 'playlist/search/?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'playlist/static?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity&type=artist-radio';
 		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
-		if (options.artist)
+		if (options.artist && mode == 'artist')
 		{
 			delete inputdata.min_hotttnesss;
 			inputdata.name = options.artist;
@@ -75,6 +75,8 @@ EchoCheck = {
 		else {
 			if (mode == 'song' && options.combined)
 				inputdata.combined = options.combined;
+			if (mode == 'playlist' && options.artist)
+				inputdata.artist = options.artist;
 			if (options.styles)
 				inputdata.style = options.styles;
 			if (options.moods)
@@ -84,31 +86,39 @@ EchoCheck = {
 			if (mode == 'song')
 			{
 				delete inputdata.min_hotttnesss;
-				if (options.minhotness)
-					inputdata.song_min_hotttnesss = options.minhotness;
-				if (options.maxhotness)
-					inputdata.song_max_hotttnesss = options.maxhotness;
+				if (options.hotnessmin || options.hotnessmin === 0)
+					inputdata.song_min_hotttnesss = options.hotnessmin;
+				if (options.hotnessmax)
+					inputdata.song_max_hotttnesss = options.hotnessmax;
+			}
+			else if (mode == 'playlist')
+			{
+				delete inputdata.min_hotttnesss;
+				if (options.hotnessmin || options.hotnessmin === 0)
+					inputdata.artist_min_hotttnesss = options.hotnessmin;
+				if (options.hotnessmax)
+					inputdata.artist_max_hotttnesss = options.hotnessmax;
 			}
 			else
 			{
-				if (options.minhotness)
-					inputdata.min_hotttnesss = options.minhotness;
-				if (options.maxhotness)
-					inputdata.max_hotttnesss = options.maxhotness;		
+				if (options.hotnessmin || options.hotnessmin === 0)
+					inputdata.min_hotttnesss = options.hotnessmin;
+				if (options.hotnessmax)
+					inputdata.max_hotttnesss = options.hotnessmax;		
 			}
-			if (mode == 'song')
+			if (mode == 'song' || mode == 'playlist')
 			{
-				if (options.minfamiliarity)
-					inputdata.artist_min_familiarity = options.minfamiliarity;
-				if (options.maxfamiliarity)
-					inputdata.artist_max_familiarity = options.maxfamiliarity;					
+				if (options.familiaritymin || options.familiaritymin === 0)
+					inputdata.artist_min_familiarity = options.familiaritymin;
+				if (options.familiaritymax)
+					inputdata.artist_max_familiarity = options.familiaritymax;					
 			}
 			else
 			{
-				if (options.minfamiliarity)
-					inputdata.min_familiarity = options.minfamiliarity;
-				if (options.maxfamiliarity)
-					inputdata.max_familiarity = options.maxfamiliarity;				
+				if (options.familiaritymin || options.familiaritymin === 0)
+					inputdata.min_familiarity = options.familiaritymin;
+				if (options.familiaritymax)
+					inputdata.max_familiarity = options.familiaritymax;				
 			}
 			if (options.startyear)
 				inputdata.artist_end_year_after = options.startyear;
@@ -120,6 +130,26 @@ EchoCheck = {
 			}
 			if (options.sortby)
 				inputdata.sort = options.sortby;
+			if (mode == 'playlist')
+			{
+				delete inputdata.sort;
+				if (options.variety)
+					inputdata.variety = options.variety;
+				if (options.distribution)
+					inputdata.distribution = options.distribution;
+				if (options.songhotnessmin || options.songhotnessmin === 0)
+					inputdata.song_min_hotttnesss = options.songhotnessmin;
+				if (options.songhotnessmax)
+					inputdata.song_max_hotttnesss = options.songhotnessmax;
+				if (options.energymin || options.energymin === 0)
+					inputdata.min_energy = options.energymin;
+				if (options.energymax)
+					inputdata.max_energy = options.energymax;
+				if (options.danceabilitymin || options.danceabilitymin === 0)
+					inputdata.min_danceability = options.danceabilitymin;
+				if (options.danceabilitymax)
+					inputdata.max_danceability = options.danceabilitymax;
+			}
 		}
 		console.log('submitting',inputdata);
 		this.callJSON(url,inputdata,callback);
@@ -153,6 +183,7 @@ Output = {
 					'<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>' +
 					'<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>' +
 					'</ul></div></div>',
+	plainTextContentRows: [],
 	songDetail: {},
 	addRow: function(text)
 	{
@@ -263,6 +294,7 @@ Output = {
 		this.artistDetail[name].terms = terms;
 		artistrowtext += '</ul></div>';
 		this.contentRows.push(artistrowtext);
+		this.plainTextContentRows.push(name);
 	},
 	saveSongRow: function(title,artistname,hotness,familiarity)
 	{
@@ -276,6 +308,7 @@ Output = {
 		songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
 		songrowtext += '</ul></div>';
 		this.contentRows.push(songrowtext);
+		this.plainTextContentRows.push(title + ' - ' + artistname);
 	},
 	// changes all focus of the output factory to this new page object element
 	setOutputToPage: function(page)
@@ -284,7 +317,8 @@ Output = {
 		var newcontent = $(page).find('div[data-role=content]');
 		if (!newcontent.length) return;
 		this.contentId = page.attr('id');
-		this.artistRows = [];
+		this.contentRows = [];
+		this.plainTextContentRows = [];
 		this.content = newcontent;
 		this.colorSpectrumIndex = 0;
 	}

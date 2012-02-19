@@ -37,17 +37,17 @@
 		<div data-role="content">
 			<div data-role="fieldcontain">
 				<fieldset data-role="controlgroup" data-type="horizontal">
-					<legend>Search for</legend>
+					<legend></legend>
 					<input type="radio" name="browse-by" id="browse-byartist" value="byartist" checked="checked" />
-         			<label for="browse-byartist">Artist</label>
+         			<label for="browse-byartist">Find Artists</label>
          			<input type="radio" name="browse-by" id="browse-bysong" value="bysong" />
-         			<label for="browse-bysong">Song</label>
+         			<label for="browse-bysong">Find Songs</label>
          			<input type="radio" name="browse-by" id="browse-byplaylist" value="byplaylist" />
-         			<label for="browse-byplaylist">Playlist</label>
+         			<label for="browse-byplaylist">Generate a Playlist</label>
 				</fieldset>
 			</div>
 			<div data-role="fieldcontain">
-				<label for="name">Artist</label>
+				<label for="name">Artist name</label>
 				<input type="text" name="artist" id="browse-artist" value=""  />
 			</div>
 			<div data-role="fieldcontain">
@@ -79,25 +79,78 @@
 				<label for="name">Descriptive terms</label>
 				<input type="text" name="terms" id="browse-terms" value=""  />
 			</div>
+			<div data-role="fieldcontain" class="playlistonly inactive">
+				<label for="variety">Artist variety</label>
+				<select name="variety" id="browse-variety">
+				   <option value="very high">Very high</option>
+				   <option value="high">High</option>
+				   <option value="average" selected="selected">Average</option>
+				   <option value="low">Low</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain" class="playlistonly inactive">
+				<label for="variety">Artist distribution</label>
+				<select name="variety" id="browse-distribution">
+				   <option value="focused">Focused</option>
+				   <option value="wandering">Wandering</option>
+				</select>
+			</div>
 			<div data-role="fieldcontain">
-				<label for="hotness">Hotness</label>
+				<label for="hotness">Artist hotness</label>
 				<select name="hotness" id="browse-hotness">
 				   <option>-</option>
 				   <option value="high">High</option>
+				   <option value="highaverage">High + Average</option>
 				   <option value="average">Average</option>
+				   <option value="lowaverage">Low + Average</option>
+				   <option value="low">Low</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain" class="playlistonly inactive">
+				<label for="variety">Song hotness</label>
+				<select name="variety" id="browse-songhotness">
+				   <option>-</option>
+				   <option value="high">High</option>
+				   <option value="highaverage">High + Average</option>
+				   <option value="average">Average</option>
+				   <option value="lowaverage">Low + Average</option>
 				   <option value="low">Low</option>
 				</select>
 			</div>
 			<div data-role="fieldcontain">
-				<label for="familiarity">Familiarity</label>
+				<label for="familiarity">Artist familiarity</label>
 				<select name="familiarity" id="browse-familiarity">
 				   <option>-</option>
 				   <option value="wellknown">Well Known</option>
+				   <option value="wellknownaverage">Well Known + Average</option>
 				   <option value="average">Average</option>
+				   <option value="obscureaverage">Obscure + Average</option>
 				   <option value="obscure">Obscure</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain">
+			<div data-role="fieldcontain" class="playlistonly inactive">
+				<label for="variety">Song energy</label>
+				<select name="energy" id="browse-energy">
+				   <option>-</option>
+				   <option value="high">High</option>
+				   <option value="highaverage">High + Average</option>
+				   <option value="average">Average</option>
+				   <option value="lowaverage">Low + Average</option>
+				   <option value="low">Low</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain" class="playlistonly inactive">
+				<label for="variety">Song danceability</label>
+				<select name="danceability" id="browse-danceability">
+				   <option>-</option>
+				   <option value="high">High</option>
+				   <option value="highaverage">High + Average</option>
+				   <option value="average">Average</option>
+				   <option value="lowaverage">Low + Average</option>
+				   <option value="low">Low</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain" class="hideonplaylist">
 				<label for="sortby">Sort by</label>
 				<select name="sortby" id="browse-sortby">
 				   <option value="hotness">Hotness</option>
@@ -129,6 +182,7 @@
 	<div data-role="page" id="browse_results">
 		<div class="header" data-role="header">
 			<h1>Browse Results</h1>
+			<a href="#plaintext" id="plaintext_link" data-icon="gear" data-rel="dialog" class="ui-btn-right">Plain Text</a>
 		</div>
 		<div data-role="content">
 
@@ -140,6 +194,16 @@
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
+		</div>
+	</div>
+	<div data-role="page" id="plaintext">
+		<div class="header" data-role="header">
+			<h1>Plain Text</h1>
+		</div>
+		<div data-role="content">
+			<textarea></textarea>
+		</div>
+		<div class="footer" data-id="footer">
 		</div>
 	</div>
 	<div data-role="page" id="styles">

@@ -4,7 +4,6 @@
 
 $(document).bind("mobileinit", function(){
 	// for hash tags that don't fall in the proper starting area, change and reload
-	console.log('starting href',document.location.href,document.location.href.split('#'));
 	var splithref = document.location.href.split('#');
 	if (splithref.length > 1 && splithref[1] != 'top' && splithref[1] != 'browse')
 	{
@@ -31,6 +30,29 @@ $(document).on('pageinit.browse','#browse',function()
 		});
 	});
 
+	$('#browse').find('#browse-byartist,#browse-bysong').on('click',function()
+	{
+		$('#browse').find('.playlistonly').addClass('inactive');
+		$('#browse').find('.hideonplaylist').removeClass('inactive');
+		$('#browse-artist').siblings('label').text('Find artist');
+		if ($(this).attr('id') == 'browse-bysong')
+			$('#browse-hotness').siblings('label').text('Song hotness');
+		else
+			$('#browse-hotness').siblings('label').text('Artist hotness');
+		if (Modernizr.sessionstorage)
+			sessionStorage.setItem('startbrowsesetting',$(this).attr('id').replace('browse-by',''));
+	});
+
+	$('#browse').find('#browse-byplaylist').on('click',function()
+	{
+		$('#browse').find('.playlistonly').removeClass('inactive');
+		$('#browse').find('.hideonplaylist').addClass('inactive');
+		$('#browse-artist').siblings('label').text('Artist name(s)');
+		$('#browse-hotness').siblings('label').text('Artist hotness');
+		if (Modernizr.sessionstorage)
+			sessionStorage.setItem('startbrowsesetting','playlist');
+	});
+
 	$('#browse').find('input.reset').on('click',function()
 	{	
 		$('#browse-artist').val('');
@@ -43,10 +65,20 @@ $(document).on('pageinit.browse','#browse',function()
 		$('#browse-terms').val('');
 		$('#browse-hotness')[0].selectedIndex = 0;
 		$('#browse-hotness').selectmenu('refresh');
+		$('#browse-songhotness')[0].selectedIndex = 0;
+		$('#browse-songhotness').selectmenu('refresh');
 		$('#browse-familiarity')[0].selectedIndex = 0;
 		$('#browse-familiarity').selectmenu('refresh');
 		$('#browse-sortby')[0].selectedIndex = 0;
 		$('#browse-sortby').selectmenu('refresh');
+		$('#browse-variety')[0].selectedIndex = 2;
+		$('#browse-variety').selectmenu('refresh');
+		$('#browse-distribution')[0].selectedIndex = 0;
+		$('#browse-distribution').selectmenu('refresh');
+		$('#browse-energy')[0].selectedIndex = 0;
+		$('#browse-energy').selectmenu('refresh');
+		$('#browse-distribution')[0].selectedIndex = 0;
+		$('#browse-distribution').selectmenu('refresh');
 	});
 	
 	$('#browse').find('input.submit').on('click',function()
@@ -92,37 +124,56 @@ $(document).on('pageinit.browse','#browse',function()
 			options.endyear = parseInt(options.endyear,10)+1;
 		options.description = jQuery.trim($('#browse-terms').val());
 		var hotness = $('#browse-hotness').val();
-		options.hotnessmininput = 0;
-		options.hotnessmaxinput = 1;
-		console.log('hotness',hotness);
+		options.hotnessmin = 0;
+		options.hotnessmax = 1;
 		if (hotness == 'high')
 		{
-			options.hotnessmininput = 0.7;
+			options.hotnessmin = 0.7;
+		}
+		if (hotness == 'highaverage')
+		{
+			options.hotnessmin = 0.3;
+			options.hotnessmax = 1;
 		}
 		if (hotness == 'average')
 		{
-			options.hotnessmininput = 0.3;
-			options.hotnessmaxinput = 0.7;
+			options.hotnessmin = 0.3;
+			options.hotnessmax = 0.7;
+		}
+		if (hotness == 'lowaverage')
+		{
+			options.hotnessmin = 0;
+			options.hotnessmax = 0.7;
 		}
 		if (hotness == 'low')
 		{
-			options.hotnessmaxinput = 0.3;
+			options.hotnessmax = 0.3;
 		}
 		var familiarity = $('#browse-familiarity').val();
-		options.familiaritymininput = 0;
-		options.familiaritymaxinput = 1;
+		options.familiaritymin = 0;
+		options.familiaritymax = 1;
 		if (familiarity == 'wellknown')
 		{
-			options.familiaritymininput = 0.7;
+			options.familiaritymin = 0.7;
+		}
+		if (familiarity == 'wellknownaverage')
+		{
+			options.familiaritymin = 0.3;
+			options.familiaritymax = 1;
 		}
 		if (familiarity == 'average')
 		{
-			options.familiaritymininput = 0.3;
-			options.familiaritymaxinput = 0.7;
+			options.familiaritymin = 0.3;
+			options.familiaritymax = 0.7;
+		}
+		if (familiarity == 'obscureaverage')
+		{
+			options.familiaritymin = 0;
+			options.familiaritymax = 0.7;
 		}
 		if (familiarity == 'obscure')
 		{
-			options.familiaritymaxinput = 0.3;
+			options.familiaritymax = 0.3;
 		}
 		options.sortby = $('#browse-sortby').val();
 		if (mode == 'song')
@@ -132,12 +183,114 @@ $(document).on('pageinit.browse','#browse',function()
 			else
 				options.sortby = 'familiarity-desc';
 		}
-		else
+		else if (mode == 'artist')
 		{
 			if (options.sortby == 'hotness')
 				options.sortby = 'hotttnesss-desc';
 			else
 				options.sortby = 'familiarity-desc';	
+		}
+		else
+			delete options.sortby;
+		if (mode == 'playlist')
+		{
+			var variety = $('#browse-variety').val();
+			options.variety = 0.3;
+			if (variety == 'very high')
+			{
+				options.variety = 1;
+			}
+			if (variety == 'high')
+			{
+				options.variety = 0.6;
+			}
+			if (variety == 'average')
+			{
+				options.variety = 0.3;
+			}
+			if (variety == 'low')
+			{
+				options.variety = 0.1;
+			}
+			options.distribution = $('#browse-distribution').val();
+			var songhotness = $('#browse-songhotness').val();
+			options.songhotnessmin = 0;
+			options.songhotnessmax = 1;
+			if (songhotness == 'high')
+			{
+				options.songhotnessmin = 0.7;
+			}
+			if (songhotness == 'highaverage')
+			{
+				options.songhotnessmin = 0.3;
+				options.songhotnessmax = 1;
+			}
+			if (songhotness == 'average')
+			{
+				options.songhotnessmin = 0.3;
+				options.songhotnessmax = 0.7;
+			}
+			if (songhotness == 'lowaverage')
+			{
+				options.songhotnessmin = 0;
+				options.songhotnessmax = 0.7;
+			}
+			if (songhotness == 'low')
+			{
+				options.songhotnessmax = 0.3;
+			}
+			var energy = $('#browse-energy').val();
+			options.energymin = 0;
+			options.energymax = 1;
+			if (energy == 'high')
+			{
+				options.energymin = 0.7;
+			}
+			if (energy == 'highaverage')
+			{
+				options.energymin = 0.3;
+				options.energymax = 1;
+			}
+			if (energy == 'average')
+			{
+				options.energymin = 0.3;
+				options.energymax = 0.7;
+			}
+			if (energy == 'lowaverage')
+			{
+				options.energymin = 0;
+				options.energymax = 0.7;
+			}
+			if (energy == 'low')
+			{
+				options.energymax = 0.3;
+			}
+			var danceability = $('#browse-danceability').val();
+			options.danceabilitymin = 0;
+			options.danceabilitymax = 1;
+			if (danceability == 'high')
+			{
+				options.danceabilitymin = 0.7;
+			}
+			if (danceability == 'highaverage')
+			{
+				options.danceabilitymin = 0.3;
+				options.danceabilitymax = 1;
+			}
+			if (danceability == 'average')
+			{
+				options.danceabilitymin = 0.3;
+				options.danceabilitymax = 0.7;
+			}
+			if (danceability == 'lowaverage')
+			{
+				options.danceabilitymin = 0;
+				options.danceabilitymax = 0.7;
+			}
+			if (danceability == 'low')
+			{
+				options.danceabilitymax = 0.3;
+			}
 		}
 		EventHandler.addArtistMenusFunctionality(Output.content);
 		EchoCheck.powerSearch(mode,options,function(res)
@@ -163,7 +316,7 @@ $(document).on('pageinit.browse','#browse',function()
 					});
 				}
 			}
-			else if (mode == 'song')
+			else if (mode == 'song' || mode == 'playlist')
 			{
 				Output.addSongsToPage(res.songs);
 
@@ -186,7 +339,36 @@ $(document).on('pageinit.browse','#browse',function()
 			Output.content.trigger('create');
 		});
 	});
+
+	// auto select mode based on initial href
+	if (Modernizr.sessionstorage)
+	{
+		var startsetting = sessionStorage.getItem('startbrowsesetting');
+		console.log('here is start setting',startsetting);
+		if (startsetting == 'song')
+		{
+			$('#browse-byartist').prop('checked',false);
+			$('#browse-bysong').trigger('click').prop('checked',true).checkboxradio("refresh");
+		}
+		if (startsetting == 'playlist')
+		{
+			$('#browse-byartist').prop('checked',false);
+			$('#browse-byplaylist').trigger('click').prop('checked',true).checkboxradio("refresh");
+		}
+	}
+
 	$(document).unbind('pageinit.browse');
+});
+$(document).on('pageinit.browseresults','#browse_results',function()
+{
+	$('#plaintext_link').on('click',function()
+	{
+		if (typeof Output == 'object')
+		{
+			$('#plaintext textarea').html(Output.plainTextContentRows.join('\n'));
+		}
+	});
+	$(document).unbind('pageinit.browseresults');	
 });
 $(document).on('pageinit.styles','#styles',function()
 {
