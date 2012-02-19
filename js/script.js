@@ -130,6 +130,8 @@ EchoCheck = {
 			}
 			if (options.sortby)
 				inputdata.sort = options.sortby;
+			if (options.results)
+				inputdata.results = options.results;
 			if (mode == 'playlist')
 			{
 				delete inputdata.sort;
@@ -203,7 +205,7 @@ Output = {
 	contentId: '',
 	contentRows: [],
 	footerContent: '<div class="footer" data-id="footer" data-position="fixed" data-role="footer"><div data-role="navbar" data-iconpos="top"><ul>' +
-					'<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>' +
+					'<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>' +
 					'<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>' +
 					'</ul></div></div>',
 	plainTextContentRows: [],
@@ -308,7 +310,7 @@ Output = {
 	{
 		var checkeditems = $('#' + pageid).find('input').filter(':checked');
 		checkeditems.prop('checked',false).checkboxradio('refresh');
-		$('#browse-' + pageid).find('.ui-btn-text').text('-');
+		$('#search-' + pageid).find('.ui-btn-text').text('-');
 	},
 	saveArtistRow: function(name,hotness,familiarity,terms)
 	{
@@ -347,8 +349,13 @@ Output = {
 		if (!newcontent.length) return;
 		this.contentId = page.attr('id');
 		this.contentRows = [];
-		if (page.attr('id') == 'browse_results')
-			this.plainTextContentRows = ['Track|Artist'];
+		if (page.attr('id') == 'search_results')
+		{
+			if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') != 'playlist')
+				this.plainTextContentRows = ['Artist'];
+			else
+				this.plainTextContentRows = ['Track|Artist'];
+		}
 		else
 			this.plainTextContentRows = ['Artist'];
 		this.content = newcontent;
@@ -401,7 +408,7 @@ EventHandler = {
 								// add event handlers for terms
 								$('#' + termspageid).on('click','li',function()
 								{
-									$('#browse-terms').val(jQuery.trim($(this).text()));
+									$('#search-terms').val(jQuery.trim($(this).text()));
 								});
 								$(document).unbind('pageinit.temppage');
 							});
@@ -410,7 +417,7 @@ EventHandler = {
 							var termstext = '<ul data-role="listview">';
 							for (var i = 0; i < detail.terms.length; i++)
 							{
-								termstext += '<li><a href="#browse">' + detail.terms[i] + '</a></li>';
+								termstext += '<li><a href="#search">' + detail.terms[i] + '</a></li>';
 							}
 							termstext += '</ul>';
 							Output.content.append(termstext).trigger('create');
@@ -465,14 +472,14 @@ EventHandler = {
 			}
 		});
 	},
-	addBrowseCheckboxFunctionality: function(pageid)
+	addsearchCheckboxFunctionality: function(pageid)
 	{
 		var fieldcontainer = $('#' + pageid).find('fieldset');
 		if (!fieldcontainer.length) return;
 		fieldcontainer.find('input[type="checkbox"]').click(function()
 		{
 			var checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
-			var textcontainer = $('#browse-' + pageid).find('.ui-btn-text');
+			var textcontainer = $('#search-' + pageid).find('.ui-btn-text');
 			var text = jQuery.trim(textcontainer.text());
 			if (this.checked)
 			{

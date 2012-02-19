@@ -30,46 +30,46 @@
 	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
 </head>
 <body>
-	<div data-role="page" id="browse">
+	<div data-role="page" id="search">
 		<div class="header" data-role="header">
-			<h1>Browse Artists</h1>
+			<h1>Power Search</h1>
 		</div>
 		<div data-role="content">
 			<div data-role="fieldcontain">
 				<fieldset data-role="controlgroup" data-type="horizontal">
 					<legend></legend>
-					<input type="radio" name="browse-by" id="browse-byartist" value="byartist" checked="checked" />
-         			<label for="browse-byartist">Find Artists</label>
-         			<input type="radio" name="browse-by" id="browse-bysong" value="bysong" />
-         			<label for="browse-bysong">Find Songs</label>
-         			<input type="radio" name="browse-by" id="browse-byplaylist" value="byplaylist" />
-         			<label for="browse-byplaylist">Generate a Playlist</label>
+					<input type="radio" name="search-by" id="search-byartist" value="byartist" checked="checked" />
+         			<label for="search-byartist">Find Artists</label>
+         			<input type="radio" name="search-by" id="search-bysong" value="bysong" />
+         			<label for="search-bysong">Find Songs</label>
+         			<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" />
+         			<label for="search-byplaylist">Generate a Playlist</label>
 				</fieldset>
 			</div>
 			<div data-role="fieldcontain">
 				<label for="name">Artist name</label>
-				<input type="text" name="artist" id="browse-artist" value=""  />
+				<input type="text" name="artist" id="search-artist" value=""  />
 			</div>
 			<div data-role="fieldcontain">
 			 	<label for="styles">Styles</label>
 			 	<div class="button_container">
-					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#styles" id="browse-styles">-</a>
+					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#styles" id="search-styles">-</a>
 				</div>
 			</div>
 			<div data-role="fieldcontain">
 				<label for="moods">Moods</label>
 				<div class="button_container">
-					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#moods" id="browse-moods">-</a>
+					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#moods" id="search-moods">-</a>
 				</div>
 			</div>
 			<div data-role="fieldcontain">
 				<fieldset data-role="controlgroup" data-type="horizontal">
 					<legend>Date Range</legend>
-					<select name="startyear" id="browse-startyear">
+					<select name="startyear" id="search-startyear">
 					   <option>Start Year</option>
 					   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
 					</select>
-					<select name="endyear" id="browse-endyear">
+					<select name="endyear" id="search-endyear">
 					   <option>End Year</option>
 					   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
 					</select>
@@ -77,11 +77,11 @@
 			</div>
 			<div data-role="fieldcontain">
 				<label for="name">Descriptive terms</label>
-				<input type="text" name="terms" id="browse-terms" value=""  />
+				<input type="text" name="terms" id="search-terms" value=""  />
 			</div>
 			<div data-role="fieldcontain" class="playlistonly inactive">
 				<label for="variety">Artist variety</label>
-				<select name="variety" id="browse-variety">
+				<select name="variety" id="search-variety">
 				   <option value="very high">Very high</option>
 				   <option value="high">High</option>
 				   <option value="average" selected="selected">Average</option>
@@ -90,14 +90,14 @@
 			</div>
 			<div data-role="fieldcontain" class="playlistonly inactive">
 				<label for="variety">Artist distribution</label>
-				<select name="variety" id="browse-distribution">
+				<select name="variety" id="search-distribution">
 				   <option value="focused">Focused</option>
 				   <option value="wandering">Wandering</option>
 				</select>
 			</div>
 			<div data-role="fieldcontain">
 				<label for="hotness">Artist hotness</label>
-				<select name="hotness" id="browse-hotness">
+				<select name="hotness" id="search-hotness">
 				   <option>-</option>
 				   <option value="high">High</option>
 				   <option value="highaverage">High + Average</option>
@@ -108,7 +108,7 @@
 			</div>
 			<div data-role="fieldcontain" class="playlistonly inactive">
 				<label for="variety">Song hotness</label>
-				<select name="variety" id="browse-songhotness">
+				<select name="variety" id="search-songhotness">
 				   <option>-</option>
 				   <option value="high">High</option>
 				   <option value="highaverage">High + Average</option>
@@ -119,7 +119,7 @@
 			</div>
 			<div data-role="fieldcontain">
 				<label for="familiarity">Artist familiarity</label>
-				<select name="familiarity" id="browse-familiarity">
+				<select name="familiarity" id="search-familiarity">
 				   <option>-</option>
 				   <option value="wellknown">Well Known</option>
 				   <option value="wellknownaverage">Well Known + Average</option>
@@ -130,7 +130,7 @@
 			</div>
 			<div data-role="fieldcontain" class="playlistonly inactive">
 				<label for="variety">Song energy</label>
-				<select name="energy" id="browse-energy">
+				<select name="energy" id="search-energy">
 				   <option>-</option>
 				   <option value="high">High</option>
 				   <option value="highaverage">High + Average</option>
@@ -141,7 +141,7 @@
 			</div>
 			<div data-role="fieldcontain" class="playlistonly inactive">
 				<label for="variety">Song danceability</label>
-				<select name="danceability" id="browse-danceability">
+				<select name="danceability" id="search-danceability">
 				   <option>-</option>
 				   <option value="high">High</option>
 				   <option value="highaverage">High + Average</option>
@@ -150,9 +150,17 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
+			<div data-role="fieldcontain">
+				<label for="results">Results</label>
+				<select name="results" id="search-results">
+				   <option value="100">100</option>
+				   <option value="50" selected="selected">50</option>
+				   <option value="20">20</option>
+				</select>
+			</div>
 			<div data-role="fieldcontain" class="hideonplaylist">
 				<label for="sortby">Sort by</label>
-				<select name="sortby" id="browse-sortby">
+				<select name="sortby" id="search-sortby">
 				   <option value="hotness">Hotness</option>
 				   <option value="familiarity">Familiarity</option>
 				</select>
@@ -160,29 +168,29 @@
 			<div class="submit_wrapper" data-role="fieldcontain">
 				<label></label>
 				<div class="button_container">
-					<input class="reset" type="submit" value="Reset"/>
+					<input class="reset" data-theme="f" type="submit" value="Reset"/>
 				</div>
 			</div>
 			<div class="submit_wrapper" data-role="fieldcontain">
 				<label></label>
 				<div class="button_container">
-					<input class="submit" type="submit" value="Go"/>
+					<input class="submit" data-theme="b" type="submit" value="Go"/>
 				</div>
 			</div>
 		</div>
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
 				<ul>
-					<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>
+					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div data-role="page" id="browse_results">
+	<div data-role="page" id="search_results">
 		<div class="header" data-role="header">
-			<h1>Browse Results</h1>
-			<a href="#plaintext" id="plaintext_link" data-icon="gear" data-rel="dialog" class="ui-btn-right">Plain Text</a>
+			<h1>Search Results</h1>
+			<a href="#plaintext" id="plaintext_link" data-icon="gear" data-rel="dialog" class="ui-btn-right">csv</a>
 		</div>
 		<div data-role="content">
 
@@ -190,7 +198,7 @@
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
 				<ul>
-					<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>
+					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
@@ -218,7 +226,7 @@
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
 				<ul>
-					<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>
+					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
@@ -236,7 +244,7 @@
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
 				<ul>
-					<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>
+					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
@@ -252,7 +260,7 @@
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
 				<ul>
-					<li><a class="browse" href="#browse" data-icon="grid" data-transition="none">Browse</a></li>
+					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
 					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
 				</ul>
 			</div>
