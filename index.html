@@ -30,13 +30,27 @@
 	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
 </head>
 <body>
-	<div data-role="page" id="search">
+	<div id="permaheader">
+		<div class="text clearfix">
+			<h1>EchoSpot</h1>
+			<h3>The power of EchoNest, delivering playlists, artists and songs for your spotify consumption.</h3>
+		</div>
+		<nav class="clearfix">
+			<ul>
+				<li><a class="playlist active" href="#">Generate a Playlist</a></li>
+				<li><a class="artist" href="#">Find Artists</a></li>
+				<li><a class="song" href="#">Find Songs</a></li>
+				<li><a class="top" href="#">Top Artists</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="page" data-role="page" id="search">
 		<div class="header" data-role="header">
 			<h1>Power Search</h1>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 			<div data-role="fieldcontain">
-				<fieldset data-role="controlgroup" data-type="horizontal">
+				<fieldset class="searchbyarea" data-role="controlgroup" data-type="horizontal">
 					<legend></legend>
 					<input type="radio" name="search-by" id="search-byartist" value="byartist" checked="checked" />
          			<label for="search-byartist">Find Artists</label>
@@ -48,7 +62,7 @@
 			</div>
 			<div data-role="fieldcontain">
 				<label for="name">Artist name</label>
-				<input type="text" name="artist" id="search-artist" value=""  />
+				<input type="text" name="artist" id="search-artist" value="" />
 			</div>
 			<div data-role="fieldcontain">
 			 	<label for="styles">Styles</label>
@@ -187,12 +201,12 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="page" id="search_results">
+	<div class="page" data-role="page" id="search_results">
 		<div class="header" data-role="header">
 			<h1>Search Results</h1>
 			<a href="#plaintext" id="plaintext_link" data-icon="gear" data-rel="dialog" class="ui-btn-right">csv</a>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 
 		</div>
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
@@ -204,21 +218,21 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="page" id="plaintext">
+	<div class="page" data-role="page" id="plaintext">
 		<div class="header" data-role="header">
 			<h1>Plain Text</h1>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 			<textarea></textarea>
 		</div>
 		<div class="footer" data-id="footer">
 		</div>
 	</div>
-	<div data-role="page" id="styles">
+	<div class="page" data-role="page" id="styles">
 		<div class="header" data-role="header">
 			<h1>Styles</h1>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 			<fieldset data-role="controlgroup">
 				
 			</fieldset>
@@ -232,11 +246,11 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="page" id="moods">
+	<div class="page" data-role="page" id="moods">
 		<div class="header" data-role="header">
 			<h1>Moods</h1>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 			<fieldset data-role="controlgroup">
 
 			</fieldset>
@@ -250,11 +264,11 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="page" id="top">
+	<div class="page" data-role="page" id="top">
 		<div class="header" data-role="header">
 			<h1>Hot Artists</h1>
 		</div>
-		<div data-role="content">
+		<div class="content" data-role="content">
 
 		</div>
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">

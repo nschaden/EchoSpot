@@ -219,6 +219,7 @@ Output = {
 	// takes currently cached rows of content (artists or songs), dumps all into content area at once
 	addContentRows: function(content)
 	{
+		console.log('adding content rows',content);
 		if (!content)
 			this.content.append(this.contentRows.join('')).trigger('create');
 		else
@@ -265,7 +266,7 @@ Output = {
 	{
 		if (typeof id != 'string' || typeof headertext != 'string') return;
 		id = id.replace(/\s+/g,'_');
-		var emptypagetext = '<div data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
+		var emptypagetext = '<div class="page" data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
 							'</h1></div><div data-role="content"></div>' + this.footerContent + ' </div>';
 		$('body').append(emptypagetext);
 		$('#' + id).page();
@@ -296,14 +297,22 @@ Output = {
 	{
 		var artistrow = this.content.children().eq(artistpos);
 		if (!artistrow.length) return;
-		var list = artistrow.find('.ui-collapsible-content > .ui-listview');
+		var list;
+		if (UserAgent.mobile)
+			list = artistrow.find('.ui-collapsible-content > .ui-listview');
+		else
+			list = artistrow.find('ul');
 		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
 	},
 	addSpotifyLinkToSongRow: function(link,songpos)
 	{
 		var songrow = this.content.children().eq(songpos);
 		if (!songrow.length) return;
-		var list = songrow.find('.ui-collapsible-content > .ui-listview');
+		var list;
+		if (UserAgent.mobile)
+			list = artistrow.find('.ui-collapsible-content > .ui-listview');
+		else
+			list = artistrow.find('ul');
 		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
 	},
 	clearCheckboxesPage: function(pageid)
@@ -317,7 +326,7 @@ Output = {
 		var artistrowtext;
 		// header
 		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-		artistrowtext = '<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + name + '</h3>';
+		artistrowtext = '<div class="color-blue-' + currcolor + ' artistrow" data-role="collapsible"><h3>' + name + '</h3>';
 		this.colorSpectrumIndex++;
 		// row details
 		artistrowtext += '<ul data-role="listview">';
@@ -332,7 +341,7 @@ Output = {
 		var songrowtext;
 		// header
 		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-		songrowtext = '<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
+		songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
 		this.colorSpectrumIndex++;
 		// row details
 		songrowtext += '<ul data-role="listview">';
@@ -345,6 +354,7 @@ Output = {
 	setOutputToPage: function(page)
 	{
 		if (typeof page != 'object') return;
+		console.log('setting output to page',page);
 		var newcontent = $(page).find('div[data-role=content]');
 		if (!newcontent.length) return;
 		this.contentId = page.attr('id');
@@ -366,7 +376,14 @@ Output = {
 EventHandler = {
 	addArtistMenusFunctionality: function(content)
 	{
-		content.on('click','.ui-collapsible-heading a',function() 
+		var targetevent = 'click';
+		var target = '.ui-collapsible-heading a';
+		if (UserAgent.desktop)
+		{
+			targetevent = 'click';
+			target = 'div.artistrow,div.songrow';
+		}
+		content.on(targetevent,target,function() 
 		{ 
 			$this = $(this);
 			if (!$this.parent().hasClass('ui-collapsible-heading-collapsed'))

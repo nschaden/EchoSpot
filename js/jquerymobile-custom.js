@@ -2,19 +2,77 @@
 	nschaden
 */
 
-$(document).bind("mobileinit", function(){
+// quick check to determine, based on past media query, if we're on desktop or mobile version
+UserAgent = {};
+if (document.documentElement.clientWidth > 480 && 1==1)
+{
+    UserAgent.desktop = true;
+    UserAgent.init = 'ready';
+    UserAgent.pageinit = 'ready';
+    UserAgent.searchPage = null;
+    UserAgent.searchResultsPage = null;
+    UserAgent.stylesPage = null;
+    UserAgent.moodsPage = null;
+    UserAgent.topPage = null;
+    $.mobile = {};
+    $.mobile.changePage = function(newpage)
+    {
+    	console.log('mobile changepage',newpage);
+    	$('div.page').not('#search').fadeOut(400,function()
+    	{
+    		$(newpage).fadeIn(400);
+    	});
+    };
+}
+else
+{
+	UserAgent.mobile = true;
+	UserAgent.init = 'mobileinit';
+	UserAgent.pageinit = 'pageinit';
+	UserAgent.searchPage = '#search';
+    UserAgent.searchResultsPage = '#search_results';
+    UserAgent.stylesPage = '#styles';
+    UserAgent.moodsPage = '#moods';
+    UserAgent.topPage = '#top';
+}
+
+$(document).bind(UserAgent.init, function(){
 	// for hash tags that don't fall in the proper starting area, change and reload
 	var splithref = document.location.href.split('#');
 	if (splithref.length > 1 && splithref[1] != 'top' && splithref[1] != 'search')
 	{
 		document.location.href = splithref[0] + '#search';
 	}
-
-	$.mobile.page.prototype.options.addBackBtn = true;
-	$.mobile.touchOverflowEnabled = true;
-	$.support.touchOverflow = true;
+	if (UserAgent.mobile)
+	{
+		$.mobile.page.prototype.options.addBackBtn = true;
+		$.mobile.touchOverflowEnabled = true;
+		$.support.touchOverflow = true;
+	}
+	else
+	{
+		// init core header options
+		$('#permaheader').find('nav li a').click(function()
+		{
+			$this = $(this);
+			if ($this.parent().hasClass('active')) return;
+			$('#permaheader').find('nav li a').removeClass('active');
+			$this.addClass('active');
+			if ($this.hasClass('artist'))
+				$('#search-byartist').trigger('click');
+			if ($this.hasClass('song'))
+				$('#search-bysong').trigger('click');
+			if ($this.hasClass('playlist'))
+				$('#search-byplaylist').trigger('click');
+			if ($this.hasClass('top'))
+			{
+				$.mobile.changePage('#top');
+			}
+			return false;
+		});
+	}
 });
-$(document).on('pageinit.search','#search',function()
+$(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 {
 	EchoCheck.fetchTopTerms(false,function(res)
 	{
@@ -85,7 +143,11 @@ $(document).on('pageinit.search','#search',function()
 	{
 		Output.setOutputToPage($('#search_results'));
 		$('#search_results').addClass('loading');
-		var existingresults = Output.content.find('div.ui-collapsible');
+		var existingresults;
+		if (UserAgent.mobile)
+			existingresults = Output.content.find('div.ui-collapsible');
+		else
+			existingresults = Output.content.children();
 		if (existingresults.length)
 		{
 			existingresults.remove();
@@ -352,18 +414,37 @@ $(document).on('pageinit.search','#search',function()
 		if (startsetting == 'song')
 		{
 			$('#search-byartist').prop('checked',false);
-			$('#search-bysong').trigger('click').prop('checked',true).checkboxradio("refresh");
+			$('#search-bysong').trigger('click').prop('checked',true);
+			if (UserAgent.mobile)
+				$('#search-bysong').checkboxradio("refresh");
+			else
+			{
+				$('#permaheader').find('nav li a').removeClass('active');
+				$('#permaheader a.song').addClass('active');
+			}
 		}
 		if (startsetting == 'playlist')
 		{
 			$('#search-byartist').prop('checked',false);
-			$('#search-byplaylist').trigger('click').prop('checked',true).checkboxradio("refresh");
+			$('#search-byplaylist').trigger('click').prop('checked',true);
+			if (UserAgent.mobile)
+				$('#search-byplaylist').checkboxradio("refresh");
+			else
+			{
+				$('#permaheader').find('nav li a').removeClass('active');
+				$('#permaheader a.playlist').addClass('active');
+			}
+		}
+		if (startsetting == 'artist' && !UserAgent.mobile)
+		{
+			$('#permaheader').find('nav li a').removeClass('active');
+			$('#permaheader a.artist').addClass('active');
 		}
 	}
 
-	$(document).unbind('pageinit.search');
+	$(document).unbind(UserAgent.pageinit + '.search');
 });
-$(document).on('pageinit.searchresults','#search_results',function()
+$(document).on(UserAgent.pageinit + '.searchresults',UserAgent.searchResultsPage,function()
 {
 	$('#plaintext_link').on('click',function()
 	{
@@ -372,20 +453,21 @@ $(document).on('pageinit.searchresults','#search_results',function()
 			$('#plaintext textarea').html(Output.plainTextContentRows.join('\n'));
 		}
 	});
-	$(document).unbind('pageinit.searchresults');	
+	$(document).unbind(UserAgent.pageinit + '.searchresults');	
 });
-$(document).on('pageinit.styles','#styles',function()
+$(document).on(UserAgent.pageinit + '.styles',UserAgent.stylesPage,function()
 {
 	EventHandler.addsearchCheckboxFunctionality('styles');
-	$(document).unbind('pageinit.styles');
+	$(document).unbind(UserAgent.pageinit + '.styles');
 });
-$(document).on('pageinit.moods','#moods',function()
+$(document).on(UserAgent.pageinit + '.moods',UserAgent.moodsPage,function()
 {
 	EventHandler.addsearchCheckboxFunctionality('moods');
-	$(document).unbind('pageinit.moods');
+	$(document).unbind('UserAgent.pageinit.moods');
 });
-$(document).on('pageinit.top','#top',function()
+$(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
 {
+	console.log('got to top');
 	Output.setOutputToPage($('#top'));
 	// have extra JQuery based animation for collapsible menus, add on demand terms and related items
 	EventHandler.addArtistMenusFunctionality(Output.content);
@@ -393,6 +475,8 @@ $(document).on('pageinit.top','#top',function()
 	// fetch artists from echonest
 	EchoCheck.fetchTopHotArtists(40,function(res)
 	{
+		if (UserAgent.desktop)
+			Output.setOutputToPage($('#top'));
 		Output.addArtistsToPage(res.artists);
 
 		// fetch artist references from spotify
@@ -412,7 +496,7 @@ $(document).on('pageinit.top','#top',function()
 		}
 		Output.content.trigger('create');
 	});
-	$(document).unbind('pageinit.top');
+	$(document).unbind(UserAgent.pageinit + '.top');
 });
 
 
