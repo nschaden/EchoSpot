@@ -18,7 +18,7 @@ if (document.documentElement.clientWidth > 480 && 1==1)
     $.mobile.changePage = function(newpage)
     {
     	console.log('mobile changepage',newpage);
-    	$('div.page').not('#search').fadeOut(400,function()
+    	$('div.page').fadeOut(400,function()
     	{
     		$(newpage).fadeIn(400);
     	});
@@ -55,7 +55,9 @@ $(document).bind(UserAgent.init, function(){
 		$('#permaheader').find('nav li a').click(function()
 		{
 			$this = $(this);
-			if ($this.parent().hasClass('active')) return;
+			if ($this.hasClass('active')) return;
+			if (!$('#search:visible').length)
+				$('#search').fadeIn(400);
 			$('#permaheader').find('nav li a').removeClass('active');
 			$this.addClass('active');
 			if ($this.hasClass('artist'))
@@ -68,6 +70,8 @@ $(document).bind(UserAgent.init, function(){
 			{
 				$.mobile.changePage('#top');
 			}
+			else
+				$('#top:visible').fadeOut(400);
 			return false;
 		});
 	}
@@ -78,11 +82,27 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	{
 		Output.setOutputToPage($('#styles'));
 		Output.addCheckboxesToPage(res.terms);
+		if (UserAgent.desktop)
+		{
+			// move results to form
+			EventHandler.addsearchCheckboxFunctionality('styles');
+			$('#styles .content fieldset').addClass('checkbox_container').insertAfter($('#styles_container'));
+			$('#search-styles').on('click',function() { $('#styles_container').next().toggle(400); return false; });
+			
+		}
 
 		EchoCheck.fetchTopTerms(true,function(res)
 		{
 			Output.setOutputToPage($('#moods'));
 			Output.addCheckboxesToPage(res.terms);
+			if (UserAgent.desktop)
+			{
+				// move results to form
+				EventHandler.addsearchCheckboxFunctionality('moods');
+				$('#moods .content fieldset').addClass('checkbox_container').insertAfter($('#moods_container'));
+				$('#search-moods').on('click',function() { $('#moods_container').next().toggle(400); return false; });
+				
+			}
 		});
 	});
 
@@ -115,33 +135,49 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		Output.clearCheckboxesPage('styles');
 		Output.clearCheckboxesPage('moods');
 		$('#search-startyear')[0].selectedIndex = 0;
-		$('#search-startyear').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-startyear').selectmenu('refresh');
 		$('#search-endyear')[0].selectedIndex = 0;
-		$('#search-endyear').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-endyear').selectmenu('refresh');
 		$('#search-terms').val('');
 		$('#search-hotness')[0].selectedIndex = 0;
-		$('#search-hotness').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-hotness').selectmenu('refresh');
 		$('#search-songhotness')[0].selectedIndex = 0;
-		$('#search-songhotness').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-songhotness').selectmenu('refresh');
 		$('#search-familiarity')[0].selectedIndex = 0;
-		$('#search-familiarity').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-familiarity').selectmenu('refresh');
 		$('#search-sortby')[0].selectedIndex = 0;
-		$('#search-sortby').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-sortby').selectmenu('refresh');
 		$('#search-variety')[0].selectedIndex = 2;
-		$('#search-variety').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-variety').selectmenu('refresh');
 		$('#search-distribution')[0].selectedIndex = 0;
-		$('#search-distribution').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-distribution').selectmenu('refresh');
 		$('#search-energy')[0].selectedIndex = 0;
-		$('#search-energy').selectmenu('refresh');
-		$('#search-distribution')[0].selectedIndex = 0;
-		$('#search-distribution').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-energy').selectmenu('refresh');
+		$('#search-danceability')[0].selectedIndex = 0;
+		if (UserAgent.mobile)
+			$('#search-danceability').selectmenu('refresh');
 		$('#search-results')[0].selectedIndex = 1;
-		$('#search-results').selectmenu('refresh');
+		if (UserAgent.mobile)
+			$('#search-results').selectmenu('refresh');
 	});
 	
 	$('#search').find('input.submit').on('click',function()
 	{
 		Output.setOutputToPage($('#search_results'));
+		if (UserAgent.desktop)
+		{
+			// $('#search').fadeOut(400);
+			$('#permaheader nav a').removeClass('active');
+		}
 		$('#search_results').addClass('loading');
 		var existingresults;
 		if (UserAgent.mobile)
@@ -158,6 +194,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		var searchpage = $('#search');
 		var mode = 'artist';
 		var modeselect = $('input[name="search-by"]:checked').val();
+		console.log('modeselect',modeselect);
 		if (modeselect == 'bysong')
 			mode = 'song';
 		if (modeselect == 'byplaylist')

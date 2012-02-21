@@ -269,7 +269,8 @@ Output = {
 		var emptypagetext = '<div class="page" data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
 							'</h1></div><div data-role="content"></div>' + this.footerContent + ' </div>';
 		$('body').append(emptypagetext);
-		$('#' + id).page();
+		if (UserAgent.mobile)
+			$('#' + id).page();
 	},
 	addSongsToPage: function(songs)
 	{
@@ -310,16 +311,25 @@ Output = {
 		if (!songrow.length) return;
 		var list;
 		if (UserAgent.mobile)
-			list = artistrow.find('.ui-collapsible-content > .ui-listview');
+			list = songrow.find('.ui-collapsible-content > .ui-listview');
 		else
-			list = artistrow.find('ul');
+			list = songrow.find('ul');
 		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
 	},
 	clearCheckboxesPage: function(pageid)
 	{
-		var checkeditems = $('#' + pageid).find('input').filter(':checked');
-		checkeditems.prop('checked',false).checkboxradio('refresh');
-		$('#search-' + pageid).find('.ui-btn-text').text('-');
+		if (UserAgent.mobile)
+		{
+			var checkeditems = $('#' + pageid).find('input').filter(':checked');
+			checkeditems.prop('checked',false).checkboxradio('refresh');
+			$('#search-' + pageid).find('.ui-btn-text').text('-');
+		}
+		else
+		{
+			var checkeditems = $('#search').find('input').filter(':checked');
+			checkeditems.prop('checked',false);
+			$('#search-' + pageid).text('-');
+		}
 	},
 	saveArtistRow: function(name,hotness,familiarity,terms)
 	{
@@ -388,17 +398,34 @@ EventHandler = {
 			$this = $(this);
 			if (!$this.parent().hasClass('ui-collapsible-heading-collapsed'))
 			{
-				var content = $this.parent().siblings('.ui-collapsible-content');
-				content.stop(true,true).slideUp(0);
+				var content;
+				if (UserAgent.mobile)
+				{
+					content = $this.parent().siblings('.ui-collapsible-content');
+					content.stop(true,true).slideUp(0);
+				}
+				else
+					content = $this;
+				
 				// dyanically insert terms, related items if it's not there
 				if (!content.find('a.terms_link').length)
 				{
-					var lookupname = jQuery.trim($this.find('span.ui-btn-text').html().replace(/<span(.*)<\/span>/,''));
+					var lookupname;
+					if (UserAgent.mobile)
+						lookupname = jQuery.trim($this.find('span.ui-btn-text').html().replace(/<span(.*)<\/span>/,''));
+					else
+						lookupname = jQuery.trim($this.find('h3').html().replace(/<span(.*)<\/span>/,''));
 					var detail = Output.artistDetail[lookupname];
+					console.log('got to detail',detail);
 					if (typeof detail == 'object')
 					{
-						var listview = content.find('ul.ui-listview');
+						var listview;
+						if (UserAgent.mobile)
+							listview = content.find('ul.ui-listview');
+						else
+							listview = content.find('ul');
 						var listviewcontents = listview.html();
+						console.log(listviewcontents);
 						// var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li class="terms">Terms<ul>';
 						// for (var i = 0; i < detail.terms.length; i++)
 						// {
@@ -408,6 +435,7 @@ EventHandler = {
 						var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
 						newlisttext += '<li><a class="related_link" href="#">Related artists</a></li></ul>';
 						listview.replaceWith(newlisttext);
+						console.log(newlisttext);
 						content.trigger('create');	
 						// force new terms pages to have the persist footer
 						// Output.addSpotifyLinkToArtistRow('hello there',detail.order);
@@ -438,6 +466,11 @@ EventHandler = {
 							}
 							termstext += '</ul>';
 							Output.content.append(termstext).trigger('create');
+							if (UserAgent.desktop)
+							{
+								$.mobile.changePage('#' + termspageid);
+								return false;
+							}
 						}
 						else
 							$.mobile.changePage('#' + termspageid);
@@ -476,6 +509,11 @@ EventHandler = {
 									});
 								}
 							});
+							if (UserAgent.desktop)
+							{
+								$.mobile.changePage('#' + relatedartistpageid);
+								return false;
+							}
 						}
 						else
 							$.mobile.changePage('#' + relatedartistpageid);							
@@ -493,12 +531,26 @@ EventHandler = {
 	{
 		var fieldcontainer = $('#' + pageid).find('fieldset');
 		if (!fieldcontainer.length) return;
-		fieldcontainer.find('input[type="checkbox"]').click(function()
+		var target;
+		if (UserAgent.mobile)
+			target = 'input[type="checkbox"]';
+		else
+			target = 'label';
+		fieldcontainer.find(target).click(function()
 		{
-			var checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
-			var textcontainer = $('#search-' + pageid).find('.ui-btn-text');
+			console.log('got a click');
+			var checkedfield;
+			if (UserAgent.mobile)
+				checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
+			else
+				checkedfield = $(this).prev().attr('name').replace('style-','').replace('_',' ');
+			var textcontainer;
+			if (UserAgent.mobile)
+				textcontainer = $('#search-' + pageid).find('.ui-btn-text');
+			else
+				textcontainer = $('#search-' + pageid);
 			var text = jQuery.trim(textcontainer.text());
-			if (this.checked)
+			if (this.checked || (UserAgent.desktop && !$(this).prev()[0].checked))
 			{
 				if (text == '-')
 				{
@@ -515,6 +567,7 @@ EventHandler = {
 					text = '-';
 				}
 			}
+			console.log(textcontainer,text);
 			textcontainer.text(text);
 		});
 	}

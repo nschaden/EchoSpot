@@ -49,7 +49,7 @@
 			<h1>Power Search</h1>
 		</div>
 		<div class="content" data-role="content">
-			<div data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<fieldset class="searchbyarea" data-role="controlgroup" data-type="horizontal">
 					<legend></legend>
 					<input type="radio" name="search-by" id="search-byartist" value="byartist" checked="checked" />
@@ -60,24 +60,24 @@
          			<label for="search-byplaylist">Generate a Playlist</label>
 				</fieldset>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="name">Artist name</label>
 				<input type="text" name="artist" id="search-artist" value="" />
 			</div>
-			<div data-role="fieldcontain">
+			<div id="styles_container" class="fieldcontain" data-role="fieldcontain">
 			 	<label for="styles">Styles</label>
 			 	<div class="button_container">
 					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#styles" id="search-styles">-</a>
 				</div>
 			</div>
-			<div data-role="fieldcontain">
+			<div id="moods_container" class="fieldcontain" data-role="fieldcontain">
 				<label for="moods">Moods</label>
 				<div class="button_container">
 					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#moods" id="search-moods">-</a>
 				</div>
 			</div>
-			<div data-role="fieldcontain">
-				<fieldset data-role="controlgroup" data-type="horizontal">
+			<div class="fieldcontain" data-role="fieldcontain">
+				<fieldset class="daterange_container" data-role="controlgroup" data-type="horizontal">
 					<legend>Date Range</legend>
 					<select name="startyear" id="search-startyear">
 					   <option>Start Year</option>
@@ -89,11 +89,11 @@
 					</select>
 				</fieldset>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="name">Descriptive terms</label>
 				<input type="text" name="terms" id="search-terms" value=""  />
 			</div>
-			<div data-role="fieldcontain" class="playlistonly inactive">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="variety">Artist variety</label>
 				<select name="variety" id="search-variety">
 				   <option value="very high">Very high</option>
@@ -102,14 +102,14 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain" class="playlistonly inactive">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="variety">Artist distribution</label>
 				<select name="variety" id="search-distribution">
 				   <option value="focused">Focused</option>
 				   <option value="wandering">Wandering</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="hotness">Artist hotness</label>
 				<select name="hotness" id="search-hotness">
 				   <option>-</option>
@@ -120,7 +120,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain" class="playlistonly inactive">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="variety">Song hotness</label>
 				<select name="variety" id="search-songhotness">
 				   <option>-</option>
@@ -131,7 +131,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="familiarity">Artist familiarity</label>
 				<select name="familiarity" id="search-familiarity">
 				   <option>-</option>
@@ -142,7 +142,7 @@
 				   <option value="obscure">Obscure</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain" class="playlistonly inactive">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="variety">Song energy</label>
 				<select name="energy" id="search-energy">
 				   <option>-</option>
@@ -153,7 +153,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain" class="playlistonly inactive">
+			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
 				<label for="variety">Song danceability</label>
 				<select name="danceability" id="search-danceability">
 				   <option>-</option>
@@ -164,7 +164,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="results">Results</label>
 				<select name="results" id="search-results">
 				   <option value="100">100</option>
@@ -172,25 +172,26 @@
 				   <option value="20">20</option>
 				</select>
 			</div>
-			<div data-role="fieldcontain" class="hideonplaylist">
+			<div class="fieldcontain hideonplaylist" data-role="fieldcontain">
 				<label for="sortby">Sort by</label>
 				<select name="sortby" id="search-sortby">
 				   <option value="hotness">Hotness</option>
 				   <option value="familiarity">Familiarity</option>
 				</select>
 			</div>
-			<div class="submit_wrapper" data-role="fieldcontain">
+			<div id="reset_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
 				<label></label>
 				<div class="button_container">
 					<input class="reset" data-theme="f" type="submit" value="Reset"/>
 				</div>
 			</div>
-			<div class="submit_wrapper" data-role="fieldcontain">
+			<div id="submit_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
 				<label></label>
 				<div class="button_container">
 					<input class="submit" data-theme="b" type="submit" value="Go"/>
 				</div>
 			</div>
+			<div class="clearfix"></div>
 		</div>
 		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
 			<div data-role="navbar" data-iconpos="top">
