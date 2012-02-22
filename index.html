@@ -15,8 +15,8 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 
-	<link rel="icon" href="http://nickschaden.com/private/spotifytest/favicon.ico" />
-	<link rel="shortcut icon" href="http://nickschaden.com/private/spotifytest/favicon.ico" />
+	<link rel="icon" href="favicon.ico" />
+	<link rel="shortcut icon" href="favicon.ico" />
 	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png" />
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png" />
@@ -32,7 +32,7 @@
 	<div id="permaheader">
 		<div class="text clearfix">
 			<h1>EchoSpot</h1>
-			<h3>The power of EchoNest, delivering playlists, artists and songs for your spotify consumption.</h3>
+			<h3>Delivering playlists, artists and songs for your Spotify consumption with the power of EchoNest.</h3>
 		</div>
 		<nav class="clearfix">
 			<ul>
@@ -55,9 +55,9 @@
 					<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" checked="checked" />
          			<label for="search-byplaylist">Playlist</label>
 					<input type="radio" name="search-by" id="search-byartist" value="byartist" />
-         			<label for="search-byartist">Artists</label>
+         			<label for="search-byartist">Artist</label>
          			<input type="radio" name="search-by" id="search-bysong" value="bysong" />
-         			<label for="search-bysong">Songs</label>
+         			<label for="search-bysong">Song</label>
 				</fieldset>
 			</div>
 			<div class="fieldcontain" data-role="fieldcontain">
@@ -92,6 +92,13 @@
 			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="name">Descriptive terms</label>
 				<input type="text" name="terms" id="search-terms" value=""  />
+			</div>
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
+				<label for="variety">Playlist Type</label>
+				<select name="energy" id="search-playlisttype">
+				   <option value="artistradio">Artist Radio</option>
+				   <option value="artistdescription">Artist Description</option>
+				</select>
 			</div>
 			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Artist variety</label>

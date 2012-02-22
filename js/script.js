@@ -65,7 +65,17 @@ EchoCheck = {
 		if (mode == 'song')
 			url = this.base + 'song/search?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
 		else if (mode == 'playlist')
-			url = this.base + 'playlist/static?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity&type=artist-radio';
+		{
+			url = this.base + 'playlist/static?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+			if (options.description && options.playlisttype && options.playlisttype == 'artistdescription')
+			{
+				var items = options.description.split(',');
+				for (var i = 0; i < items.length; i++)
+				{
+					url += '&description=' + jQuery.trim(items[i]);
+				}
+			}
+		}
 		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
 		if (options.artist && mode == 'artist')
 		{
@@ -81,7 +91,7 @@ EchoCheck = {
 				inputdata.style = options.styles;
 			if (options.moods)
 				inputdata.mood = options.moods;
-			if (options.description)
+			if (options.description && mode != 'playlist')
 				inputdata.description = options.description;
 			if (mode == 'song')
 			{
@@ -135,6 +145,16 @@ EchoCheck = {
 			if (mode == 'playlist')
 			{
 				delete inputdata.sort;
+				if (options.playlisttype && options.playlisttype == 'artistdescription')
+				{
+					delete inputdata.artist;
+					inputdata.type = 'artist-description';
+				}
+				else
+				{
+					delete inputdata.description;
+					inputdata.type = 'artist-radio';
+				}
 				if (options.variety)
 					inputdata.variety = options.variety;
 				if (options.distribution)
@@ -267,7 +287,10 @@ Output = {
 		id = id.replace(/\s+/g,'_');
 		var emptypagetext = '<div class="page" data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
 							'</h1></div><div data-role="content"></div>' + this.footerContent + ' </div>';
-		$('body').append(emptypagetext);
+		if (UserAgent.mobile)
+			$('body').append(emptypagetext);
+		else
+			$('#permafooter').before(emptypagetext);
 		if (UserAgent.mobile)
 			$('#' + id).page();
 	},

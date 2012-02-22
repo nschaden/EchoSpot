@@ -18,9 +18,9 @@ if (document.documentElement.clientWidth > 480)
     $.mobile = {};
     $.mobile.changePage = function(newpage)
     {
-    	$('div.page').not(newpage).fadeOut(400,function()
+    	$('div.page,#permafooter').not(newpage).fadeOut(400,function()
     	{
-    		$(newpage).hide().fadeIn(400);
+    		$(newpage).hide().fadeIn(400,function() { if (newpage != '#search_results') $('#permafooter').show(); });
     	});
     	if (newpage != '#search_results')
     		$('#permaheader nav li.csv_container').hide();
@@ -42,7 +42,7 @@ if (document.documentElement.clientWidth > 480)
     		
     	if (Modernizr.history)
     	{
-    		history.pushState({page:newpage});
+    		history.pushState({page:newpage},null,'');
     		UserAgent.manualHistory.push(newpage);
     	}
     };
@@ -191,6 +191,9 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		if (UserAgent.mobile)
 			$('#search-endyear').selectmenu('refresh');
 		$('#search-terms').val('');
+		$('#search-playlisttype')[0].selectedIndex = 0;
+		if (UserAgent.mobile)
+			$('#search-playlisttype').selectmenu('refresh');
 		$('#search-hotness')[0].selectedIndex = 0;
 		if (UserAgent.mobile)
 			$('#search-hotness').selectmenu('refresh');
@@ -259,8 +262,16 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		}
 		
 	
-		options.styles = $('#search-styles').find('.ui-btn-text').text().replace('-','');
-		options.moods = $('#search-moods').find('.ui-btn-text').text().replace('-','');
+		if (UserAgent.mobile)
+		{
+			options.styles = $('#search-styles').find('.ui-btn-text').text().replace('-','');
+			options.moods = $('#search-moods').find('.ui-btn-text').text().replace('-','');
+		}	
+		else
+		{
+			options.styles = $('#search-styles').text().replace('-','');
+			options.moods = $('#search-moods').text().replace('-','');
+		}
 		options.startyear = $('#search-startyear').val();
 		if (options.startyear == 'Start Year')
 			options.startyear = null;
@@ -344,6 +355,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			delete options.sortby;
 		if (mode == 'playlist')
 		{
+			options.playlisttype = $('#search-playlisttype').val();
 			var variety = $('#search-variety').val();
 			options.variety = 0.3;
 			if (variety == 'very high')
@@ -492,6 +504,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 				}
 			}
 			Output.content.trigger('create');
+			$('#permafooter').show();
 		});
 	});
 

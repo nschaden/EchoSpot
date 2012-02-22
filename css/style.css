@@ -337,6 +337,11 @@ td { vertical-align: top; }
   margin-top: 4em;
 }
 
+#search .searchbyarea label {
+  font-size: 0.9em;
+  margin: 0;
+}
+
 /* search results */
 #search_results.loading {
   background: #f0f0f0 url(../img/loading_bg_light.gif) center center no-repeat;
@@ -407,6 +412,7 @@ td { vertical-align: top; }
 
   .songrow h3, .artistrow h3 {
     display: inline-block;
+    float: left;
     font-weight: 200;
     line-height: 66px;
     margin: 0 40px;
@@ -421,6 +427,7 @@ td { vertical-align: top; }
   }
 
   .songrow ul, .artistrow ul {
+    float: left;
     display: none;
   }
 
@@ -588,6 +595,7 @@ td { vertical-align: top; }
   #search .fieldcontain {
     display: block;
     margin: 1em 0;
+    min-width: 640px;
   }
 
   #search .fieldcontain.inactive {
@@ -681,6 +689,7 @@ td { vertical-align: top; }
 
   #search #reset_container, #search #submit_container {
     float: left;
+    min-width: inherit;
   }
 
   #search #submit_container label {
@@ -707,7 +716,7 @@ td { vertical-align: top; }
   }
 }
 
-@media only screen and (max-width: 990px) {
+@media only screen and (min-device-width: 480px) and (max-width: 990px) {
 
   #permaheader h3 {
     font-size: 0.75em;
@@ -748,7 +757,7 @@ td { vertical-align: top; }
   }
 }
 
-@media only screen and (max-width: 790px) {
+@media only screen and (min-device-width: 480px) and (max-width: 790px) {
 
   #permaheader {
     min-width: 720px;
