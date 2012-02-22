@@ -6,11 +6,10 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="robots" content="noindex, nofollow">
 	
-	<title>EchoSpot</title>
-	<meta name="description" content="">
-	<meta name="author" content="">
+	<title>echospot</title>
+	<meta name="description" content="Delivering playlists, artists and songs for your Spotify consumption with the power of EchoNest.">
+	<meta name="author" content="Nick Schaden">
 
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -41,6 +40,7 @@
 				<li><a class="artist" href="#">Find Artists</a></li>
 				<li><a class="song" href="#">Find Songs</a></li>
 				<li><a class="top" href="#">Top Artists</a></li>
+				<li class="csv_container"><a class="csv" href="#">Download CSV</a></li>
 			</ul>
 		</nav>
 	</div>
@@ -52,12 +52,12 @@
 			<div class="fieldcontain" data-role="fieldcontain">
 				<fieldset class="searchbyarea" data-role="controlgroup" data-type="horizontal">
 					<legend></legend>
-					<input type="radio" name="search-by" id="search-byartist" value="byartist" checked="checked" />
-         			<label for="search-byartist">Find Artists</label>
+					<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" checked="checked" />
+         			<label for="search-byplaylist">Playlist</label>
+					<input type="radio" name="search-by" id="search-byartist" value="byartist" />
+         			<label for="search-byartist">Artists</label>
          			<input type="radio" name="search-by" id="search-bysong" value="bysong" />
-         			<label for="search-bysong">Find Songs</label>
-         			<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" />
-         			<label for="search-byplaylist">Generate a Playlist</label>
+         			<label for="search-bysong">Songs</label>
 				</fieldset>
 			</div>
 			<div class="fieldcontain" data-role="fieldcontain">
@@ -93,7 +93,7 @@
 				<label for="name">Descriptive terms</label>
 				<input type="text" name="terms" id="search-terms" value=""  />
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Artist variety</label>
 				<select name="variety" id="search-variety">
 				   <option value="very high">Very high</option>
@@ -102,7 +102,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Artist distribution</label>
 				<select name="variety" id="search-distribution">
 				   <option value="focused">Focused</option>
@@ -120,7 +120,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Song hotness</label>
 				<select name="variety" id="search-songhotness">
 				   <option>-</option>
@@ -131,7 +131,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain" data-role="fieldcontain">
 				<label for="familiarity">Artist familiarity</label>
 				<select name="familiarity" id="search-familiarity">
 				   <option>-</option>
@@ -142,7 +142,7 @@
 				   <option value="obscure">Obscure</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Song energy</label>
 				<select name="energy" id="search-energy">
 				   <option>-</option>
@@ -153,7 +153,7 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly inactive" data-role="fieldcontain">
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
 				<label for="variety">Song danceability</label>
 				<select name="danceability" id="search-danceability">
 				   <option>-</option>
@@ -172,7 +172,7 @@
 				   <option value="20">20</option>
 				</select>
 			</div>
-			<div class="fieldcontain hideonplaylist" data-role="fieldcontain">
+			<div class="fieldcontain hideonplaylist inactive" data-role="fieldcontain">
 				<label for="sortby">Sort by</label>
 				<select name="sortby" id="search-sortby">
 				   <option value="hotness">Hotness</option>
@@ -281,8 +281,13 @@
 			</div>
 		</div>
 	</div>
-
+	<div id="permafooter">
+		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a>, <a href="https://github.com/palmerj3/SpotifyJS">Spotify JS</a> and lots of coffee.</h3>  
+	</div>
 <script src="js/plugins.js"></script>
 <script src="js/script.js"></script>
+<form id="save-csv" name="export" action="save-csv.php" method="post">
+	<input type="hidden" value="" name="csv">
+</form>
 </body>
 </html>

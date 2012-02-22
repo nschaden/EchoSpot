@@ -4,7 +4,7 @@
 
 // quick check to determine, based on past media query, if we're on desktop or mobile version
 UserAgent = {};
-if (document.documentElement.clientWidth > 480 && 1==1)
+if (document.documentElement.clientWidth > 480)
 {
     UserAgent.desktop = true;
     UserAgent.init = 'ready';
@@ -14,15 +14,53 @@ if (document.documentElement.clientWidth > 480 && 1==1)
     UserAgent.stylesPage = null;
     UserAgent.moodsPage = null;
     UserAgent.topPage = null;
+    UserAgent.manualHistory = ['#search'];
     $.mobile = {};
     $.mobile.changePage = function(newpage)
     {
-    	console.log('mobile changepage',newpage);
-    	$('div.page').fadeOut(400,function()
+    	$('div.page').not(newpage).fadeOut(400,function()
     	{
-    		$(newpage).fadeIn(400);
+    		$(newpage).hide().fadeIn(400);
     	});
+    	if (newpage != '#search_results')
+    		$('#permaheader nav li.csv_container').hide();
+    	if (newpage == '#search')
+    	{
+    		$('#permaheader nav a.top').removeClass('active');    			
+    		if ($('#search-byartist')[0].checked)
+    			$('#permaheader nav a.artist').addClass('active');
+    		else if ($('#search-byplaylist')[0].checked)
+    			$('#permaheader nav a.playlist').addClass('active');
+    		else
+    			$('#permaheader nav a.song').addClass('active');
+    	}
+    	else if (newpage == '#top')
+    	{
+    		$('#permaheader nav a').removeClass('active');
+    		$('#permaheader nav a.top').addClass('active');
+    	}
+    		
+    	if (Modernizr.history)
+    	{
+    		history.pushState({page:newpage});
+    		UserAgent.manualHistory.push(newpage);
+    	}
     };
+    if (Modernizr.history)
+    {
+    	// initial push on page load is always the search page
+    	// history.pushState({page:'#search'})
+    	window.onpopstate = function (event) 
+    	{
+			// see what is available in the event object
+			if (UserAgent.manualHistory.length > 1)
+			{
+				UserAgent.manualHistory.pop();
+				var nextpage = UserAgent.manualHistory.pop();
+				$.mobile.changePage(nextpage);
+			}
+		}
+    }
 }
 else
 {
@@ -55,23 +93,32 @@ $(document).bind(UserAgent.init, function(){
 		$('#permaheader').find('nav li a').click(function()
 		{
 			$this = $(this);
-			if ($this.hasClass('active')) return;
-			if (!$('#search:visible').length)
-				$('#search').fadeIn(400);
-			$('#permaheader').find('nav li a').removeClass('active');
-			$this.addClass('active');
-			if ($this.hasClass('artist'))
-				$('#search-byartist').trigger('click');
-			if ($this.hasClass('song'))
-				$('#search-bysong').trigger('click');
-			if ($this.hasClass('playlist'))
-				$('#search-byplaylist').trigger('click');
-			if ($this.hasClass('top'))
+			if ($this.hasClass('active')) return false;
+			if ($this.hasClass('csv'))
 			{
-				$.mobile.changePage('#top');
+				var data = Output.plainTextContentRows.join('\n');
+				$('#save-csv input').val(data);
+				$('#save-csv').submit();
 			}
 			else
-				$('#top:visible').fadeOut(400);
+			{
+				if (!$('#search:visible').length && !$this.hasClass('top'))
+					$.mobile.changePage('#search');
+				$('#permaheader').find('nav li a').removeClass('active');
+				$this.addClass('active');
+				if ($this.hasClass('artist'))
+					$('#search-byartist').trigger('click');
+				if ($this.hasClass('song'))
+					$('#search-bysong').trigger('click');
+				if ($this.hasClass('playlist'))
+					$('#search-byplaylist').trigger('click');
+				if ($this.hasClass('top'))
+				{
+					$.mobile.changePage('#top');
+				}
+				else
+					$('#top:visible').fadeOut(400);	
+			}
 			return false;
 		});
 	}
@@ -110,7 +157,10 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	{
 		$('#search').find('.playlistonly').addClass('inactive');
 		$('#search').find('.hideonplaylist').removeClass('inactive');
-		$('#search-artist').siblings('label').text('Find artist');
+		if ($(this).attr('id') == 'search-bysong')
+			$('#search-artist').siblings('label').text('Find artist/track');
+		else
+			$('#search-artist').siblings('label').text('Find artist');
 		if ($(this).attr('id') == 'search-bysong')
 			$('#search-hotness').siblings('label').text('Song hotness');
 		else
@@ -194,7 +244,6 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		var searchpage = $('#search');
 		var mode = 'artist';
 		var modeselect = $('input[name="search-by"]:checked').val();
-		console.log('modeselect',modeselect);
 		if (modeselect == 'bysong')
 			mode = 'song';
 		if (modeselect == 'byplaylist')
@@ -397,6 +446,8 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		EchoCheck.powerSearch(mode,options,function(res)
 		{
 			$('#search_results').removeClass('loading');
+			if (UserAgent.desktop)
+				$('#permaheader nav li.csv_container').show();
 			if (mode == 'artist')
 			{
 				Output.addArtistsToPage(res.artists);
@@ -504,7 +555,6 @@ $(document).on(UserAgent.pageinit + '.moods',UserAgent.moodsPage,function()
 });
 $(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
 {
-	console.log('got to top');
 	Output.setOutputToPage($('#top'));
 	// have extra JQuery based animation for collapsible menus, add on demand terms and related items
 	EventHandler.addArtistMenusFunctionality(Output.content);

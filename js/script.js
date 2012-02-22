@@ -219,7 +219,6 @@ Output = {
 	// takes currently cached rows of content (artists or songs), dumps all into content area at once
 	addContentRows: function(content)
 	{
-		console.log('adding content rows',content);
 		if (!content)
 			this.content.append(this.contentRows.join('')).trigger('create');
 		else
@@ -358,23 +357,24 @@ Output = {
 		songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
 		songrowtext += '</ul></div>';
 		this.contentRows.push(songrowtext);
-		this.plainTextContentRows.push(title + '|' + artistname);
+		this.plainTextContentRows.push(title + ',' + artistname);
 	},
 	// changes all focus of the output factory to this new page object element
 	setOutputToPage: function(page)
 	{
 		if (typeof page != 'object') return;
-		console.log('setting output to page',page);
 		var newcontent = $(page).find('div[data-role=content]');
 		if (!newcontent.length) return;
 		this.contentId = page.attr('id');
 		this.contentRows = [];
 		if (page.attr('id') == 'search_results')
 		{
-			if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') != 'playlist')
+			if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') == 'artist')
 				this.plainTextContentRows = ['Artist'];
+			else if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') == 'song')
+				this.plainTextContentRows = ['Song'];
 			else
-				this.plainTextContentRows = ['Track|Artist'];
+				this.plainTextContentRows = ['Track,Artist'];
 		}
 		else
 			this.plainTextContentRows = ['Artist'];
@@ -390,13 +390,13 @@ EventHandler = {
 		var target = '.ui-collapsible-heading a';
 		if (UserAgent.desktop)
 		{
-			targetevent = 'click';
+			targetevent = 'mouseover';
 			target = 'div.artistrow,div.songrow';
 		}
 		content.on(targetevent,target,function() 
 		{ 
 			$this = $(this);
-			if (!$this.parent().hasClass('ui-collapsible-heading-collapsed'))
+			if ((UserAgent.mobile && !$this.parent().hasClass('ui-collapsible-heading-collapsed')) || (UserAgent.desktop && !$this.find('a.terms_link:visible').length))
 			{
 				var content;
 				if (UserAgent.mobile)
@@ -416,7 +416,6 @@ EventHandler = {
 					else
 						lookupname = jQuery.trim($this.find('h3').html().replace(/<span(.*)<\/span>/,''));
 					var detail = Output.artistDetail[lookupname];
-					console.log('got to detail',detail);
 					if (typeof detail == 'object')
 					{
 						var listview;
@@ -425,25 +424,17 @@ EventHandler = {
 						else
 							listview = content.find('ul');
 						var listviewcontents = listview.html();
-						console.log(listviewcontents);
-						// var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li class="terms">Terms<ul>';
-						// for (var i = 0; i < detail.terms.length; i++)
-						// {
-						// 	newlisttext += '<li><a href="#">' + detail.terms[i] + '</a></li>';
-						// }
-						// newlisttext += '</ul></li><li><a class="related_link" href="#">Related artists</a></li></ul>';
 						var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
 						newlisttext += '<li><a class="related_link" href="#">Related artists</a></li></ul>';
 						listview.replaceWith(newlisttext);
-						console.log(newlisttext);
 						content.trigger('create');	
-						// force new terms pages to have the persist footer
-						// Output.addSpotifyLinkToArtistRow('hello there',detail.order);
 					}
 					// clicking on the terms event handler 
 					content.on('click','a.terms_link',function()
 					{
 						// check if page exists
+						if (UserAgent.desktop)
+							$('#permaheader').find('nav a.top').removeClass('active');
 						var termspageid = lookupname.replace(/\s+/g,'') + '_terms';
 						if (!$('#' + termspageid).length)
 						{
@@ -462,23 +453,32 @@ EventHandler = {
 							var termstext = '<ul data-role="listview">';
 							for (var i = 0; i < detail.terms.length; i++)
 							{
-								termstext += '<li><a href="#search">' + detail.terms[i] + '</a></li>';
+								termstext += '<li class="termsrow"><a href="#search">' + detail.terms[i] + '</a></li>';
 							}
 							termstext += '</ul>';
 							Output.content.append(termstext).trigger('create');
 							if (UserAgent.desktop)
 							{
 								$.mobile.changePage('#' + termspageid);
-								return false;
+								$('#' + termspageid).on('click','a',function()
+								{
+									$('#search-terms').val(jQuery.trim($(this).text()));
+									$.mobile.changePage('#search');
+									$('#permaheader nav a.artist').trigger('click');
+									return false;
+								});
 							}
 						}
 						else
 							$.mobile.changePage('#' + termspageid);
+						return false;
 					});
 					// clicking on related link event handler
 					content.on('click','a.related_link',function()
 					{
 						// check if page exists
+						if (UserAgent.desktop)
+							$('#permaheader').find('nav a.top').removeClass('active');
 						var relatedartistpageid = lookupname.replace(/\s+/g,'') + '_related';
 						if (!$('#' + relatedartistpageid).length)
 						{
@@ -519,11 +519,17 @@ EventHandler = {
 							$.mobile.changePage('#' + relatedartistpageid);							
 					});
 				}
-				content.slideDown(400,'linear');
+				if (UserAgent.mobile)
+					content.slideDown(400,'linear');
+				else
+					$this.find('a.terms_link,a.related_link').parent().show();
 			}
 			else
 			{
-				$this.parent().siblings('.ui-collapsible-content').stop(true,true).slideDown(0).slideUp(400,'linear'); 
+				if (UserAgent.mobile)
+					$this.parent().siblings('.ui-collapsible-content').stop(true,true).slideDown(0).slideUp(400,'linear'); 
+				// else
+				// 	$this.find('a.terms_link,a.related_link').parent().hide();
 			}
 		});
 	},
@@ -538,7 +544,6 @@ EventHandler = {
 			target = 'label';
 		fieldcontainer.find(target).click(function()
 		{
-			console.log('got a click');
 			var checkedfield;
 			if (UserAgent.mobile)
 				checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
@@ -567,7 +572,6 @@ EventHandler = {
 					text = '-';
 				}
 			}
-			console.log(textcontainer,text);
 			textcontainer.text(text);
 		});
 	}
