@@ -212,6 +212,8 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		$('#search-distribution')[0].selectedIndex = 0;
 		if (UserAgent.mobile)
 			$('#search-distribution').selectmenu('refresh');
+		$('#search-mintempo').val('');
+		$('#search-maxtempo').val('');
 		$('#search-energy')[0].selectedIndex = 0;
 		if (UserAgent.mobile)
 			$('#search-energy').selectmenu('refresh');
@@ -375,6 +377,8 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 				options.variety = 0.1;
 			}
 			options.distribution = $('#search-distribution').val();
+			options.mintempo = $('#search-mintempo').val();
+			options.maxtempo = $('#search-maxtempo').val();
 			var songhotness = $('#search-songhotness').val();
 			options.songhotnessmin = 0;
 			options.songhotnessmax = 1;
@@ -463,6 +467,11 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			if (mode == 'artist')
 			{
 				Output.addArtistsToPage(res.artists);
+				if (!res.artists.length)
+				{
+					Output.saveArtistRow('No artists found');
+					Output.addContentRows();
+				}	
 
 				// fetch artist references from spotify
 				for (i = 0; i < res.artists.length; i++)
@@ -483,6 +492,11 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			else if (mode == 'song' || mode == 'playlist')
 			{
 				Output.addSongsToPage(res.songs);
+				if (!res.songs.length)
+				{
+					Output.saveSongRow('No songs found');
+					Output.addContentRows();
+				}
 
 				// fetch track references from spotify
 				for (i = 0; i < res.songs.length; i++)
@@ -506,6 +520,12 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			Output.content.trigger('create');
 			$('#permafooter').show();
 		});
+	});
+
+	$('#search-artist').on('keypress',function(e)
+	{
+		if (e.keyCode == 13 && !e.ctrlKey && !e.shiftKey && !e.altKey)
+			$('#search').find('input.submit').trigger('click');
 	});
 
 	// auto select mode based on initial href

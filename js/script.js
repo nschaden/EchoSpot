@@ -21,7 +21,13 @@ EchoCheck = {
 		{
 	        if (data.response.status.code !== 0) 
 	        {
-	            alert("Whoops... Unexpected error from server. " + data.response.status.message);
+	        	if (Output.currentId == 'search_results')
+	        	{
+	        		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+					Output.addContentRows();
+				}
+	        	else
+	            	console.log("Unexpected error from server. " + data.response.status.message);
 	        } 
 	        else 
 	        {
@@ -30,7 +36,13 @@ EchoCheck = {
 	    } 
 	    else 
 	    {
-	        alert("Unexpected response from server");
+	    	if (Output.currentId == 'search_results')
+        	{
+        		Output.saveArtistRow('Unexpected error from server.');
+				Output.addContentRows();
+			}
+        	else
+	        	console.log("Unexpected response from server");
 	    }
 	    return false;	
 	},
@@ -157,6 +169,10 @@ EchoCheck = {
 				}
 				if (options.variety)
 					inputdata.variety = options.variety;
+				if (options.mintempo)
+					inputdata.min_tempo = options.mintempo;
+				if (options.maxtempo)
+					inputdata.max_tempo = options.maxtempo;
 				if (options.distribution)
 					inputdata.distribution = options.distribution;
 				if (options.songhotnessmin || options.songhotnessmin === 0)
@@ -361,10 +377,17 @@ Output = {
 		artistrowtext = '<div class="color-blue-' + currcolor + ' artistrow" data-role="collapsible"><h3>' + name + '</h3>';
 		this.colorSpectrumIndex++;
 		// row details
-		artistrowtext += '<ul data-role="listview">';
-		artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
-		this.artistDetail[name].terms = terms;
-		artistrowtext += '</ul></div>';
+		if (typeof hotness == 'undefined')
+		{
+			artistrowtext += '</div>';
+		}
+		else
+		{
+			artistrowtext += '<ul data-role="listview">';
+			artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			this.artistDetail[name].terms = terms;
+			artistrowtext += '</ul></div>';
+		}
 		this.contentRows.push(artistrowtext);
 		this.plainTextContentRows.push(name);
 	},
@@ -373,12 +396,22 @@ Output = {
 		var songrowtext;
 		// header
 		var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-		songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
+		if (typeof artistname == 'undefined')
+			songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + '</h3>';
+		else
+			songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
 		this.colorSpectrumIndex++;
 		// row details
-		songrowtext += '<ul data-role="listview">';
-		songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
-		songrowtext += '</ul></div>';
+		if (typeof artistname == 'undefined')
+		{
+			songrowtext += '</div>';
+		}
+		else
+		{
+			songrowtext += '<ul data-role="listview">';
+			songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			songrowtext += '</ul></div>';
+		}
 		this.contentRows.push(songrowtext);
 		this.plainTextContentRows.push(title + ',' + artistname);
 	},

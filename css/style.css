@@ -613,6 +613,7 @@ td { vertical-align: top; }
   #search > div.content {
     padding: 0;
     margin: 0 40px;
+    min-height: 300px;
   }
 
   #search input, #search input[type="text"], #search .button_container {
