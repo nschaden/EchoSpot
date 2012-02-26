@@ -27,7 +27,12 @@ EchoCheck = {
 					Output.addContentRows();
 				}
 	        	else
-	            	console.log("Unexpected error from server. " + data.response.status.message);
+	        	{
+	        		Output.setOutputToPage($('#search_results'));
+	        		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+					Output.addContentRows();
+					$.mobile.changePage('#search_results');
+	            }
 	        } 
 	        else 
 	        {
@@ -42,7 +47,12 @@ EchoCheck = {
 				Output.addContentRows();
 			}
         	else
-	        	console.log("Unexpected response from server");
+        	{
+        		Output.setOutputToPage($('#search_results'));
+	        	Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+				Output.addContentRows();
+				$.mobile.changePage('#search_results');
+        	}
 	    }
 	    return false;	
 	},
@@ -85,6 +95,14 @@ EchoCheck = {
 				for (var i = 0; i < items.length; i++)
 				{
 					url += '&description=' + jQuery.trim(items[i]);
+				}
+			}
+			else if (options.artist && options.playlisttype && options.playlisttype == 'artistradio')
+			{
+				var items = options.artist.split(',');
+				for (var i = 0; i < items.length; i++)
+				{
+					url += '&artist=' + jQuery.trim(items[i]);
 				}
 			}
 		}

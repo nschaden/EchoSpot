@@ -59,7 +59,7 @@ if (document.documentElement.clientWidth > 480)
 				var nextpage = UserAgent.manualHistory.pop();
 				$.mobile.changePage(nextpage);
 			}
-		}
+		};
     }
 }
 else
@@ -505,7 +505,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 					SpotCheck.getTrackLink(currsong.title,currsong.artist_name,function(href,trackname)
 					{
 						// based on response, find position, insert accordingly
-						if (href != false)
+						if (href !== false)
 						{
 							var ref = Output.songDetail[trackname];
 							if (typeof ref == 'object')
