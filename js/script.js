@@ -97,7 +97,7 @@ EchoCheck = {
 					url += '&description=' + jQuery.trim(items[i]);
 				}
 			}
-			else if (options.artist && options.playlisttype && options.playlisttype == 'artistradio')
+			else if (options.artist && options.playlisttype && (options.playlisttype == 'artistradio' || options.playlisttype == 'artist'))
 			{
 				var items = options.artist.split(',');
 				for (var i = 0; i < items.length; i++)
@@ -183,7 +183,10 @@ EchoCheck = {
 				else
 				{
 					delete inputdata.description;
-					inputdata.type = 'artist-radio';
+					if (options.playlisttype == 'artist')
+						inputdata.type = 'artist';
+					else
+						inputdata.type = 'artist-radio';
 				}
 				if (options.variety)
 					inputdata.variety = options.variety;
