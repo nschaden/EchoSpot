@@ -134,8 +134,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			// move results to form
 			EventHandler.addsearchCheckboxFunctionality('styles');
 			$('#styles .content fieldset').addClass('checkbox_container').insertAfter($('#styles_container'));
-			$('#search-styles').on('click',function() { $('#styles_container').next().toggle(400); return false; });
-			
+			$('#search-styles').on('click',function() { $('#styles_container').next().toggle(400); return false; });			
 		}
 
 		EchoCheck.fetchTopTerms(true,function(res)
@@ -173,7 +172,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	{
 		$('#search').find('.playlistonly').removeClass('inactive');
 		$('#search').find('.hideonplaylist').addClass('inactive');
-		$('#search-artist').siblings('label').text('Artist name(s)');
+		$('#search-artist').siblings('label').text('Artist(s)/Spotify URI(s)');
 		$('#search-hotness').siblings('label').text('Artist hotness');
 		if (Modernizr.sessionstorage)
 			sessionStorage.setItem('startsearchsetting','playlist');
@@ -229,10 +228,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	{
 		Output.setOutputToPage($('#search_results'));
 		if (UserAgent.desktop)
-		{
-			// $('#search').fadeOut(400);
 			$('#permaheader nav a').removeClass('active');
-		}
 		$('#search_results').addClass('loading');
 		var existingresults;
 		if (UserAgent.mobile)
@@ -472,22 +468,6 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 					Output.saveArtistRow('No artists found');
 					Output.addContentRows();
 				}	
-
-				// fetch artist references from spotify
-				for (i = 0; i < res.artists.length; i++)
-				{
-					currartist = res.artists[i];
-					SpotCheck.getArtistLink(currartist.name,function(href,name)
-					{
-						// based on response, find position, insert accordingly
-						var ref = Output.artistDetail[name];
-						if (typeof ref == 'object')
-						{
-							ref.spotlink = href;
-							Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
-						}
-					});
-				}
 			}
 			else if (mode == 'song' || mode == 'playlist')
 			{
@@ -496,25 +476,6 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 				{
 					Output.saveSongRow('No songs found');
 					Output.addContentRows();
-				}
-
-				// fetch track references from spotify
-				for (i = 0; i < res.songs.length; i++)
-				{
-					currsong = res.songs[i];
-					SpotCheck.getTrackLink(currsong.title,currsong.artist_name,function(href,trackname)
-					{
-						// based on response, find position, insert accordingly
-						if (href !== false)
-						{
-							var ref = Output.songDetail[trackname];
-							if (typeof ref == 'object')
-							{
-								ref.spotlink = href;
-								Output.addSpotifyLinkToSongRow(href,ref[Output.contentId + '_order']);
-							}	
-						}
-					});
 				}
 			}
 			Output.content.trigger('create');
@@ -558,6 +519,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		}
 		if (startsetting == 'artist' && !UserAgent.mobile)
 		{
+			$('#search-byartist').trigger('click').prop('checked',true);
 			$('#permaheader').find('nav li a').removeClass('active');
 			$('#permaheader a.artist').addClass('active');
 		}
@@ -598,22 +560,6 @@ $(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
 		if (UserAgent.desktop)
 			Output.setOutputToPage($('#top'));
 		Output.addArtistsToPage(res.artists);
-
-		// fetch artist references from spotify
-		for (i = 0; i < res.artists.length; i++)
-		{
-			currartist = res.artists[i];
-			SpotCheck.getArtistLink(currartist.name,function(href,name)
-			{
-				// based on response, find position, insert accordingly
-				var ref = Output.artistDetail[name];
-				if (typeof ref == 'object')
-				{
-					ref.spotlink = href;
-					Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
-				}
-			});
-		}
 		Output.content.trigger('create');
 	});
 	$(document).unbind(UserAgent.pageinit + '.top');

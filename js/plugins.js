@@ -1,9 +1,3 @@
 // make it safe to use console.log always
 (function(a){function b(){}for(var c="assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,markTimeline,profile,profileEnd,time,timeEnd,trace,warn".split(","),d;!!(d=c.pop());){a[d]=a[d]||b;}})
 (function(){try{console.log();return window.console;}catch(a){return (window.console={});}}());
-
-// Spotify JS 
-// https://github.com/palmerj3/SpotifyJS
-// developed by Jason Palmer
-// http://www.jason-palmer.com/
-var Spotify={};Spotify.Metadata=function(){var f={},d="1",c="http://ws.spotify.com/",k=".json",j="search",l="lookup",e={method:"track",q:""},h={params:{}};function g(){var n=false;try{n=new ActiveXObject("Msxml2.XMLHTTP")}catch(m){try{n=new ActiveXObject("Microsoft.XMLHTTP")}catch(p){n=false}}if(n===false&&typeof XMLHttpRequest!=="undefined"){try{n=new XMLHttpRequest()}catch(o){n=false}}return n}function b(p,o){var n={},m;for(m in p){if(p.hasOwnProperty(m)){n[m]=p[m]}}for(m in o){if(o.hasOwnProperty(m)){n[m]=o[m]}}return n}function a(o){var n="?",m;for(m in o){if(o.hasOwnProperty(m)){n+=m+"="+o[m]+"&"}}return n.substring(0,n.length-1)}function i(n,q,p,m){var o=g();if(typeof q==="undefined"){q="GET"}if(typeof p==="undefined"){p=function(){}}if(typeof m==="undefined"){m=function(){}}o.open(q,n,true);o.onreadystatechange=function(){if(o.readyState===4){if(o.status===200){p(o.responseText)}else{m(o.responseText,o.status)}}};o.send(null)}f.search=function(n,q){if((typeof n==="string"||typeof n==="object")&&typeof q==="function"){var o=(typeof n==="string"?{q:n}:n),p=b(e,o),m=c+j+"/"+d+"/"+p.method+k;m+=a({q:p.q});i(m,"GET",q);return true}else{return false}};f.lookup=function(o,p){if(typeof o==="object"&&typeof p==="function"){var m=b(h,o),n=c+l+"/"+d+"/"+k;m.params.uri="spotify:"+m.target+":"+m.id;n+=a(m.params);i(n,"GET",p);return true}else{return false}};return f};

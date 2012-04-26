@@ -6,61 +6,86 @@ EchoCheck = {
 	base: 'http://developer.echonest.com/api/v4/',
 	callJSON: function(url,inputdata,callback)
 	{
-		$.getJSON(url,inputdata,function(data)
-		{
-			if (EchoCheck.checkResponse(data))
+		$.ajax({
+			url: url,
+			dataType: 'json',
+			data: inputdata,
+			success: function(data)
 			{
-				if (typeof callback == 'function')
-					callback(data.response);
-			}
+				if (EchoCheck.checkResponse(data))
+				{
+					if (typeof callback == 'function')
+						callback(data.response);
+				}
+			},
+			error: function(res,status)
+			{
+				if (Output.currentId == 'search_results')
+      	{
+      		$('#search_results').removeClass('loading');
+      		Output.saveArtistRow('Unexpected error from server.');
+					Output.addContentRows();
+				}
+      	else
+      	{
+      		Output.setOutputToPage($('#search_results'));
+      		$('#search_results').removeClass('loading');
+      		Output.saveArtistRow('Unexpected error from server.');
+					Output.addContentRows();
+					$.mobile.changePage('#search_results');
+        }				
+			},
+			timeout: 4000
 		});
 	},
 	checkResponse: function(data)
 	{
 		if (data.response) 
 		{
-	        if (data.response.status.code !== 0) 
-	        {
-	        	if (Output.currentId == 'search_results')
-	        	{
-	        		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+      if (data.response.status.code !== 0) 
+      {
+      	if (Output.currentId == 'search_results')
+      	{
+      		$('#search_results').removeClass('loading');
+      		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
 					Output.addContentRows();
 				}
-	        	else
-	        	{
-	        		Output.setOutputToPage($('#search_results'));
-	        		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+      	else
+      	{
+      		Output.setOutputToPage($('#search_results'));
+      		$('#search_results').removeClass('loading');
+      		Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
 					Output.addContentRows();
 					$.mobile.changePage('#search_results');
-	            }
-	        } 
-	        else 
-	        {
-	            return true;
-	        }
-	    } 
-	    else 
-	    {
-	    	if (Output.currentId == 'search_results')
-        	{
-        		Output.saveArtistRow('Unexpected error from server.');
+        }
+      } 
+      else 
+      {
+        return true;
+      }
+	  } 
+	  else 
+	  {
+    	if (Output.currentId == 'search_results')
+      {
+    		Output.saveArtistRow('Unexpected error from server.');
 				Output.addContentRows();
 			}
-        	else
-        	{
-        		Output.setOutputToPage($('#search_results'));
-	        	Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
+      else
+      {
+      	Output.setOutputToPage($('#search_results'));
+        Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
 				Output.addContentRows();
 				$.mobile.changePage('#search_results');
-        	}
-	    }
-	    return false;	
+      }
+	  }
+	  return false;	
 	},
 	findRelatedArtists: function(artistnameorid,namemode,callback)
 	{
 		if (typeof artistnameorid != 'string') return;
-		var url = this.base + 'artist/similar?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
-		var inputdata = {'format':'jsonp','api_key':this.api,'start':0,'results':30};
+		var url = this.base + 'artist/similar?callback=?&bucket=id:spotify-WW&bucket=hotttnesss&bucket=familiarity&bucket=terms';
+		var inputdata = {'format':'jsonp','api_key':this.api,'limit':true,'start':0,'results':30};
 		if (namemode)
 			inputdata.name = artistnameorid;
 		else
@@ -77,18 +102,18 @@ EchoCheck = {
 	fetchTopHotArtists: function(results,callback)
 	{
 		if (typeof results != 'number') return;
-		var url = this.base + 'artist/top_hottt?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
-		this.callJSON(url,{'format':'jsonp','api_key':this.api,'results': results},callback);
+		var url = this.base + 'artist/top_hottt?callback=?&bucket=id:spotify-WW&bucket=hotttnesss&bucket=familiarity&bucket=terms';
+		this.callJSON(url,{'format':'jsonp','api_key':this.api,'limit':true,'results': results},callback);
 	},
 	powerSearch: function(mode,options,callback)
 	{
 		if (typeof mode != 'string' || typeof options != 'object') return;
-		var url = this.base + 'artist/search?callback=?&bucket=hotttnesss&bucket=familiarity&bucket=terms';
+		var url = this.base + 'artist/search?callback=?&bucket=id:spotify-WW&bucket=hotttnesss&bucket=familiarity&bucket=terms';
 		if (mode == 'song')
-			url = this.base + 'song/search?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'song/search?callback=?&bucket=id:spotify-WW&bucket=song_hotttnesss&bucket=artist_familiarity';
 		else if (mode == 'playlist')
 		{
-			url = this.base + 'playlist/static?callback=?&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'playlist/static?callback=?&bucket=id:spotify-WW&bucket=tracks&bucket=song_hotttnesss&bucket=artist_familiarity';
 			if (options.description && options.playlisttype && options.playlisttype == 'artistdescription')
 			{
 				var items = options.description.split(',');
@@ -102,11 +127,20 @@ EchoCheck = {
 				var items = options.artist.split(',');
 				for (var i = 0; i < items.length; i++)
 				{
-					url += '&artist=' + jQuery.trim(items[i]);
+					// check if item is direct spotify reference, if so add to artist_id or track_id
+					if (items[i].indexOf('spotify:artist') > -1)
+						url += '&artist_id=spotify-WW:' + jQuery.trim(items[i].replace('spotify:',''));
+					else 
+					{
+						if (items[i].indexOf('spotify:track') > -1)
+							url += '&track_id=spotify-WW:' + jQuery.trim(items[i].replace('spotify:',''));
+						else
+							url += '&artist=' + jQuery.trim(items[i]);
+					}
 				}
 			}
 		}
-		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc',results:50,min_hotttnesss:0.1};
+		var inputdata = {'format':'jsonp','api_key':this.api,'sort':'hotttnesss-desc','limit':true,results:50,min_hotttnesss:0.1};
 		if (options.artist && mode == 'artist')
 		{
 			delete inputdata.min_hotttnesss;
@@ -213,46 +247,6 @@ EchoCheck = {
 		this.callJSON(url,inputdata,callback);
 	}		
 };
-SpotCheck = {
-	spotdata: new Spotify.Metadata(),
-	getArtistLink: function(artistname,callback)
-	{
-		var artistnamecheck = artistname.replace(/\&/g,' ');
-		this.spotdata.search({method:'artist',q:encodeURI(artistnamecheck)},function(data)
-		{
-			var response = JSON.parse(data);
-			var returnhref = false;
-			if (response.artists.length > 0)
-				returnhref = response.artists[0].href;
-			if (typeof callback == 'function')
-				callback(returnhref,artistname);
-		});
-	},
-	getTrackLink: function(trackname,artistname,callback)
-	{
-		var tracknamecheck = trackname.replace(/\&/g,' ');
-		this.spotdata.search({method:'track',q:encodeURI(tracknamecheck)},function(data)
-		{
-			var response = JSON.parse(data);
-			var returnhref = false;
-			if (typeof response.tracks != 'object') return;
-			var gotmatch = false;
-			for (var i = 0; i < response.tracks.length; i++)
-			{
-				var currtrack = response.tracks[i];
-				if (jQuery.trim(trackname.toLowerCase()) == currtrack.name.toLowerCase() && jQuery.trim(artistname.toLowerCase()) == currtrack.artists[0].name.toLowerCase())
-				{
-					gotmatch = true;
-					if (typeof callback == 'function')
-						callback(currtrack.href,trackname);
-					break;
-				}
-			}
-			if (!gotmatch && typeof callback == 'function')
-				callback(false,trackname);
-		});
-	}
-};
 
 Output = {
 	artistDetail: {},
@@ -300,7 +294,10 @@ Output = {
 			for (var j = 0; j < currartist.terms.length; j++)
 				currterms.push(currartist.terms[j].name);
 			existingdetail.terms = currterms;
-			Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms);
+			var spotlink = '#';
+			if (typeof currartist.foreign_ids == 'object' && typeof currartist.foreign_ids[0] == 'object')
+				spotlink = 'spotify://' + currartist.foreign_ids[0].foreign_id.replace('spotify-WW:','');
+			Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms,spotlink);
 		}
 		Output.addContentRows();
 	},
@@ -348,7 +345,10 @@ Output = {
 				existingdetail.artist_id = currsong.artist_id;
 			}
 			existingdetail[this.contentId + '_order'] = i;
-			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_familiarity);
+			var spotlink = '#';
+			if (typeof currsong.tracks == 'object' && typeof currsong.tracks[0] == 'object')
+				spotlink = 'spotify://' + currsong.tracks[0].foreign_id.replace('spotify-WW:','');
+			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_familiarity,spotlink);
 		}
 		Output.addContentRows();	
 	},
@@ -390,7 +390,7 @@ Output = {
 			$('#search-' + pageid).text('-');
 		}
 	},
-	saveArtistRow: function(name,hotness,familiarity,terms)
+	saveArtistRow: function(name,hotness,familiarity,terms,spotifylink)
 	{
 		var artistrowtext;
 		// header
@@ -405,14 +405,14 @@ Output = {
 		else
 		{
 			artistrowtext += '<ul data-role="listview">';
-			artistrowtext += '<li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			artistrowtext += '<li><a href="' + spotifylink + '" data-role="button">Open on Spotify</a></li><li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
 			this.artistDetail[name].terms = terms;
 			artistrowtext += '</ul></div>';
 		}
 		this.contentRows.push(artistrowtext);
 		this.plainTextContentRows.push(name);
 	},
-	saveSongRow: function(title,artistname,hotness,familiarity)
+	saveSongRow: function(title,artistname,hotness,familiarity,spotifylink)
 	{
 		var songrowtext;
 		// header
@@ -430,7 +430,7 @@ Output = {
 		else
 		{
 			songrowtext += '<ul data-role="listview">';
-			songrowtext += '<li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			songrowtext += '<li><a href="' + spotifylink + '" data-role="button">Open on Spotify</a></li><li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
 			songrowtext += '</ul></div>';
 		}
 		this.contentRows.push(songrowtext);
@@ -570,21 +570,6 @@ EventHandler = {
 							EchoCheck.findRelatedArtists(detail.echoid,false,function(res)
 							{
 								Output.addArtistsToPage(res.artists);
-								// fetch artist references from spotify
-								for (i = 0; i < res.artists.length; i++)
-								{
-									currartist = res.artists[i];
-									SpotCheck.getArtistLink(currartist.name,function(href,name)
-									{
-										// based on response, find position, insert accordingly
-										var ref = Output.artistDetail[name];
-										if (typeof ref == 'object')
-										{
-											ref.spotlink = href;
-											Output.addSpotifyLinkToArtistRow(href,ref[Output.contentId + '_order']);
-										}
-									});
-								}
 							});
 							if (UserAgent.desktop)
 							{
@@ -605,8 +590,6 @@ EventHandler = {
 			{
 				if (UserAgent.mobile)
 					$this.parent().siblings('.ui-collapsible-content').stop(true,true).slideDown(0).slideUp(400,'linear'); 
-				// else
-				// 	$this.find('a.terms_link,a.related_link').parent().hide();
 			}
 		});
 	},

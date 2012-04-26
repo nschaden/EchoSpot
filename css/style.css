@@ -345,6 +345,7 @@ td { vertical-align: top; }
 /* search results */
 #search_results.loading {
   background: #f0f0f0 url(../img/loading_bg_light.gif) center center no-repeat;
+  min-height: 200px;
 }
 
 /* responsive for desktop mode */
