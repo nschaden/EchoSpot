@@ -102,6 +102,20 @@ $(document).bind(UserAgent.init, function(){
 			}
 			else
 			{
+				if ($('#help').length)
+				{
+					if (Modernizr.sessionstorage)
+					{
+						if ($this.hasClass('playlist'))
+							sessionStorage.setItem('startsearchsetting','playlist');
+						if ($this.hasClass('artist'))
+							sessionStorage.setItem('startsearchsetting','artist');
+						if ($this.hasClass('song'))
+							sessionStorage.setItem('startsearchsetting','song');
+					}
+					
+					document.location.href = '/echospot';
+				}
 				if (!$('#search:visible').length && !$this.hasClass('top'))
 					$.mobile.changePage('#search');
 				$('#permaheader').find('nav li a').removeClass('active');
@@ -112,6 +126,8 @@ $(document).bind(UserAgent.init, function(){
 					$('#search-bysong').trigger('click');
 				if ($this.hasClass('playlist'))
 					$('#search-byplaylist').trigger('click');
+				if ($this.hasClass('help'))
+					document.location.href = '/echospot/help.html';
 				if ($this.hasClass('top'))
 				{
 					$.mobile.changePage('#top');
@@ -515,7 +531,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	});
 
 	// auto select mode based on initial href
-	if (Modernizr.sessionstorage)
+	if (Modernizr.sessionstorage && !$('#help').length)
 	{
 		var startsetting = sessionStorage.getItem('startsearchsetting');
 		if (startsetting == 'song')

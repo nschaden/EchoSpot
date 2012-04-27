@@ -28,7 +28,7 @@
 	<script src="js/jquerymobile-custom.js"></script>
 	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
 </head>
-<body>
+<body id="help">
 	<div id="permaheader">
 		<div class="text clearfix">
 			<h1>EchoSpot</h1>
@@ -36,7 +36,7 @@
 		</div>
 		<nav class="clearfix">
 			<ul>
-				<li><a class="playlist active" href="#">Generate a Playlist</a></li>
+				<li><a class="playlist" href="#">Generate a Playlist</a></li>
 				<li><a class="artist" href="#">Find Artists</a></li>
 				<li><a class="song" href="#">Find Songs</a></li>
 				<li><a class="top" href="#">Top Artists</a></li>
@@ -46,7 +46,41 @@
 		</nav>
 	</div>
 	<div class="page textonly" data-role="page" id="search">
-		<h2>Contents
+		<h2>Contents</h2>
+		<ul>
+			<li><a href="#intro">Introduction</a></li>
+			<li><a href="#playlist">Generating playlists</a></li>
+			<li><a href="#artist">Finding artists</a></li>
+			<li><a href="#song">Finding songs</a></li>
+			<li><a href="#top">Top artists</a></li>
+			<li><a href="#export">Export playlists to Spotify</a></li>
+		</ul>
+
+		<h3 id="intro">Introduction</h3>
+
+		<p>EchoSpot is a little web application that harnesses the power of the Echonest API to help you find new cool artists, playlists and songs. 
+			Technically the app can be used on its own for casual browsing, but its real power comes when hooked back into Spotify. Any artist or song
+			has a simple link that auto links back to the Spotify app. Also, when combined with csv parser tools, you can import playlists generated here
+			back into Spotify as well.</p>
+
+		<p>EchoSpot has full mobile integration for on the go as well. Just open this site on a mobile device for a completely different, jQuery Mobile
+			based experience. Clicks on spotify links here auto link into the Spotify mobile app.</p>
+
+		<h3 id="playlist">Generating playlists</h3>
+
+		<p>There are four types of static playlists Echonest can generate: artist radio, artist description, specific artists, and song radio. Select between
+			these with the <em>Playlist Type</em> dropdown. Artist radio requires anywhere from one to five artists entered (under <em>Artist(s)/Spotify URI(s)</em>) as the base to generate a playlist of both these artists and related artists. Specific artists is like artist radio, but it restricts 
+			the playlist naturally to just those artists. Song radio requires anywhere from one to five Spotify URIs (of the format 'spotify:track:XXXXXXX' in the <em>Artist(s)/Spotify URI(s)</em> field). Artist description requires anywhere from 1-5 terms, separated by commas (e.g. 80s, cold, funk)
+			in the <em>Descriptive terms</em> field, and generates a playlist based on those terms.</p>
+
+		<p>So while every playlist requires either the <em>Artist(s)/Spotify URI(s)</em> or <em>Descriptive terms</em> fields filled there's a lot
+			of other options to limit what comes back. Take a look at the <a href="http://developer.echonest.com/docs/v4/playlist.html#static">Echonest documentation</a> playlist for all the details.</p>
+
+		<p>As clarification to be very specific: song hotness, energy, and danceability can be set to 'high', 'average' and 'low', or combinations of that (e.g. 'high + average'). High refers to a rating above 0.7, average between 0.3 and 0.7 while low refers to ratings below 0.3. Artist familiarity
+			can be set to 'familiar', 'average' and 'obscure' or combinations of. Familiar has a rating above 0.7, average to between 0.3 and 0.7 and low below 0.3. Finally, artist variety can be set to 'very high', 'high', 'average' and 'low'. Very high sets variety to 1, the highest setting. High sets it to 0.6, average is the default setting of 0.3, and low sets it to 0.1.</p>
+
+
+
 	</div>
 	<div id="permafooter">
 		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
