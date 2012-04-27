@@ -110,10 +110,10 @@ EchoCheck = {
 		if (typeof mode != 'string' || typeof options != 'object') return;
 		var url = this.base + 'artist/search?callback=?&bucket=id:spotify-WW&bucket=hotttnesss&bucket=familiarity&bucket=terms';
 		if (mode == 'song')
-			url = this.base + 'song/search?callback=?&bucket=id:spotify-WW&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'song/search?callback=?&bucket=id:spotify-WW&bucket=tracks&bucket=song_hotttnesss&bucket=artist_hotttnesss&bucket=audio_summary&bucket=artist_familiarity';
 		else if (mode == 'playlist')
 		{
-			url = this.base + 'playlist/static?callback=?&bucket=id:spotify-WW&bucket=tracks&bucket=song_hotttnesss&bucket=artist_familiarity';
+			url = this.base + 'playlist/static?callback=?&bucket=id:spotify-WW&bucket=tracks&bucket=song_hotttnesss&bucket=artist_hotttnesss&bucket=audio_summary&bucket=artist_familiarity';
 			if (options.description && options.playlisttype && options.playlisttype == 'artistdescription')
 			{
 				var items = options.description.split(',');
@@ -242,6 +242,8 @@ EchoCheck = {
 					inputdata.min_danceability = options.danceabilitymin;
 				if (options.danceabilitymax)
 					inputdata.max_danceability = options.danceabilitymax;
+				if (options.sortbyplaylist && options.sortbyplaylist != "random")
+					inputdata.sort = options.sortbyplaylist;
 			}
 		}
 		this.callJSON(url,inputdata,callback);
@@ -348,7 +350,7 @@ Output = {
 			var spotlink = '#';
 			if (typeof currsong.tracks == 'object' && typeof currsong.tracks[0] == 'object')
 				spotlink = 'spotify://' + currsong.tracks[0].foreign_id.replace('spotify-WW:','');
-			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_familiarity,spotlink);
+			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_hotttnesss,currsong.artist_familiarity,currsong.audio_summary.danceability,currsong.audio_summary.energy,currsong.audio_summary.tempo,spotlink);
 		}
 		Output.addContentRows();	
 	},
@@ -362,7 +364,7 @@ Output = {
 			list = artistrow.find('.ui-collapsible-content > .ui-listview');
 		else
 			list = artistrow.find('ul');
-		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
+		list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
 	},
 	addSpotifyLinkToSongRow: function(link,songpos)
 	{
@@ -373,7 +375,7 @@ Output = {
 			list = songrow.find('.ui-collapsible-content > .ui-listview');
 		else
 			list = songrow.find('ul');
-		list.prepend('<li><a href="' + link + '" data-role="button">Open on Spotify</a></li>').trigger('create');
+		list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
 	},
 	clearCheckboxesPage: function(pageid)
 	{
@@ -405,14 +407,14 @@ Output = {
 		else
 		{
 			artistrowtext += '<ul data-role="listview">';
-			artistrowtext += '<li><a href="' + spotifylink + '" data-role="button">Open on Spotify</a></li><li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			artistrowtext += '<li><a href="' + spotifylink + '" data-role="button">Spotify Link</a></li><li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
 			this.artistDetail[name].terms = terms;
 			artistrowtext += '</ul></div>';
 		}
 		this.contentRows.push(artistrowtext);
 		this.plainTextContentRows.push(name);
 	},
-	saveSongRow: function(title,artistname,hotness,familiarity,spotifylink)
+	saveSongRow: function(title,artistname,songhotness,artisthotness,artistfamiliarity,danceability,energy,tempo,spotifylink)
 	{
 		var songrowtext;
 		// header
@@ -430,7 +432,10 @@ Output = {
 		else
 		{
 			songrowtext += '<ul data-role="listview">';
-			songrowtext += '<li><a href="' + spotifylink + '" data-role="button">Open on Spotify</a></li><li>Song hotness: ' + Math.round(hotness*100) + '%</li><li>Artist familiarity: ' + Math.round(familiarity*100) + '%</li>';
+			songrowtext += '<li><a href="' + spotifylink + '" data-role="button">Spotify Link</a></li>';
+			songrowtext += '<li>SH: ' + Math.round(songhotness*100) + '%</li><li>AH: ' + Math.round(artisthotness*100) + '%</li>';
+			songrowtext += '<li>AF: ' + Math.round(artistfamiliarity*100) + '%</li><li>D: ' + Math.round(danceability*100) + '%</li>';
+			songrowtext += '<li>E: ' + Math.round(energy*100) + '%</li><li class="last">T:' + tempo + '</li>';
 			songrowtext += '</ul></div>';
 		}
 		this.contentRows.push(songrowtext);
@@ -502,7 +507,7 @@ EventHandler = {
 							listview = content.find('ul');
 						var listviewcontents = listview.html();
 						var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
-						newlisttext += '<li><a class="related_link" href="#">Related artists</a></li></ul>';
+						newlisttext += '<li class="last"><a class="related_link" href="#">Related artists</a></li></ul>';
 						listview.replaceWith(newlisttext);
 						content.trigger('create');	
 					}

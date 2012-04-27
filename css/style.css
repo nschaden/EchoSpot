@@ -446,6 +446,15 @@ td { vertical-align: top; }
     text-transform: lowercase;
   }
 
+  .songrow li {
+    font-size: 14px;
+    margin-right: 20px;
+  }
+
+  .songrow li.last, .artistrow li.last {
+    margin-right: 0;
+  }
+
   .termsrow {
     height: 33px;
   }
@@ -501,6 +510,16 @@ td { vertical-align: top; }
     -webkit-box-shadow: inset -1px 0 0 0 #33373d;
     -moz-box-shadow: inset -1px 0 0 0 #33373d;
     box-shadow: inset -1px 0 0 0 #33373d;
+  }
+
+  #permaheader nav a:hover {
+    background-color: #616975;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(104, 111, 122)),to(rgb(69, 76, 87)));
+    background-image: -webkit-linear-gradient(top, rgb(104, 111, 122), rgb(69, 76, 87));
+    background-image: -moz-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+    background-image: -o-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+    background-image: -ms-linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
+    background-image: linear-gradient(top, rgb(114, 122, 134), rgb(80, 88, 100));
   }
 
   #permaheader nav a.playlist {
@@ -594,9 +613,11 @@ td { vertical-align: top; }
   }
 
   #search .fieldcontain {
+    clear: both;
     display: block;
     margin: 1em 0;
     min-width: 640px;
+    position: relative;
   }
 
   #search .fieldcontain.inactive {
@@ -637,6 +658,20 @@ td { vertical-align: top; }
     box-shadow: inset 0px 1px 4px       rgba(0,0,0,.2);
   }
 
+  #search input[type="text"].error {
+    border: 1px solid #f00;
+  }
+
+  #search .errorlabel {
+    bottom: -16px;
+    color: #f00;
+    font-size: 12px;
+    font-style: italic;
+    left: 200px;
+    margin: 0;
+    position: absolute;
+  }
+
   #search .button_container {
     background-color: #fff;
     background-color: #616975;
@@ -647,6 +682,38 @@ td { vertical-align: top; }
     background-image: -ms-linear-gradient(top, rgb(246, 247, 248), rgb(238, 239, 240));
     background-image: linear-gradient(top, rgb(246, 247, 248), rgb(238, 239, 240));
     display: inline-block;
+  }
+
+  #search .button_container.selector {
+    -moz-transition: background-position .1s linear;
+    -ms-transition: background-position .1s linear;
+    -o-transition: background-position .1s linear;
+    -webkit-transition: all .1s linear;
+    background-color: #577fb2;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(129,159,197)),to(rgb(87,127,178)));
+    background-image: -webkit-linear-gradient(top, rgb(129,159,197), rgb(87,127,178));
+    background-image: -moz-linear-gradient(top, rgb(129,159,197), rgb(87,127,178));
+    background-image: -o-linear-gradient(top, rgb(129,159,197), rgb(87,127,178));
+    background-image: -ms-linear-gradient(top, rgb(129,159,197), rgb(87,127,178));
+    background-image: linear-gradient(top, rgb(129,159,197), rgb(87,127,178));
+    background-repeat: repeat-x;
+    border-color: #3a577e;
+    transition: background-position .1s linear;
+  }
+
+  #search .button_container.selector:hover {
+    background-position: 0 -21px;
+  }
+
+  #search .button_container.selector:active {
+    border-color: #2d4462;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 3px 6px 0px inset;
+  }
+
+  #search .button_container.selector > input {
+    box-shadow: none;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   }
 
   #search .button_container a, #search .button_container a:visited, #search .button_container a:hover, #search .button_container a:active {
@@ -692,6 +759,10 @@ td { vertical-align: top; }
   #search #reset_container, #search #submit_container {
     float: left;
     min-width: inherit;
+  }
+
+  #search #submit_container {
+    clear: none;
   }
 
   #search #submit_container label {
@@ -757,32 +828,12 @@ td { vertical-align: top; }
   .songrow li, .artistrow li {
     font-size: 0.75em;
   }
-}
 
-@media only screen and (min-device-width: 480px) and (max-width: 790px) {
-
-  #permaheader {
-    min-width: 720px;
-  }
-
-  #permaheader h1 {
-    padding-bottom: 0;
-  }
-
-  #permaheader h3 {
-    clear: left;
-    margin: 0 0 0 40px;
-    padding: 20px 0;
-  }
-
-  .artistrow h3 {
-    width: 180px;
-  }
-
-  .artistrow, .songrow, .termrow {
-    min-width: 760px;
+  .songrow, .artistrow, .termsrow {
+    min-width: 800px;
   }
 }
+
 
 
 

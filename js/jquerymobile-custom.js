@@ -179,7 +179,8 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	});
 
 	$('#search').find('input.reset').on('click',function()
-	{	
+	{
+		$('#search-artist,#search-terms').removeClass('error').siblings('.errorlabel').remove();
 		$('#search-artist').val('');
 		Output.clearCheckboxesPage('styles');
 		Output.clearCheckboxesPage('moods');
@@ -205,6 +206,9 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		$('#search-sortby')[0].selectedIndex = 0;
 		if (UserAgent.mobile)
 			$('#search-sortby').selectmenu('refresh');
+		$('#search-sortbyplaylist')[0].selectedIndex = 0;
+		if (UserAgent.mobile)
+			$('#search-sortbyplaylist').selectmenu('refresh');
 		$('#search-variety')[0].selectedIndex = 2;
 		if (UserAgent.mobile)
 			$('#search-variety').selectmenu('refresh');
@@ -226,22 +230,6 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 	
 	$('#search').find('input.submit').on('click',function()
 	{
-		Output.setOutputToPage($('#search_results'));
-		if (UserAgent.desktop)
-			$('#permaheader nav a').removeClass('active');
-		$('#search_results').addClass('loading');
-		var existingresults;
-		if (UserAgent.mobile)
-			existingresults = Output.content.find('div.ui-collapsible');
-		else
-			existingresults = Output.content.children();
-		if (existingresults.length)
-		{
-			existingresults.remove();
-		}
-		else
-			EventHandler.addArtistMenusFunctionality(Output.content);
-		$.mobile.changePage('#search_results');
 		var searchpage = $('#search');
 		var mode = 'artist';
 		var modeselect = $('input[name="search-by"]:checked').val();
@@ -258,6 +246,35 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		{
 			options.artist = jQuery.trim($('#search-artist').val());
 		}
+		// simple error checking
+		$('#search-artist,#search-terms').removeClass('error').siblings('.errorlabel').remove();
+		var checkitem = '';
+		if (mode != 'playlist' || $('#search-playlisttype').val() != 'artistdescription')
+			checkitem = '#search-artist';
+		else
+			checkitem = '#search-terms';
+		if (!$.trim($(checkitem).val()).length)
+		{
+			$(checkitem).addClass('error').focus().after('<p class="errorlabel">Required field</p>');
+			return;
+		}
+		Output.setOutputToPage($('#search_results'));
+		if (UserAgent.desktop)
+			$('#permaheader nav a').removeClass('active');
+		$('#search_results').addClass('loading');
+		var existingresults;
+		if (UserAgent.mobile)
+			existingresults = Output.content.find('div.ui-collapsible');
+		else
+			existingresults = Output.content.children();
+		if (existingresults.length)
+		{
+			existingresults.remove();
+		}
+		else
+			EventHandler.addArtistMenusFunctionality(Output.content);
+		$.mobile.changePage('#search_results');
+		
 		
 	
 		if (UserAgent.mobile)
@@ -453,6 +470,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			{
 				options.danceabilitymax = 0.3;
 			}
+			options.sortbyplaylist = $('#search-sortbyplaylist').val();
 		}
 		EventHandler.addArtistMenusFunctionality(Output.content);
 		EchoCheck.powerSearch(mode,options,function(res)

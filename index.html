@@ -32,7 +32,7 @@
 	<div id="permaheader">
 		<div class="text clearfix">
 			<h1>EchoSpot</h1>
-			<h3>Delivering playlists, artists and songs for your Spotify consumption with the power of EchoNest.</h3>
+			<h3>Spotify consumption with the power of EchoNest.</h3>
 		</div>
 		<nav class="clearfix">
 			<ul>
@@ -195,15 +195,33 @@
 				   <option value="familiarity">Familiarity</option>
 				</select>
 			</div>
+			<div class="fieldcontain playlistonly" data-role="fieldcontain">
+				<label for="sortbyplaylist">Sort by</label>
+				<select name="sortbyplaylist" id="search-sortbyplaylist">
+				   <option value="random">Random</option>
+				   <option value="song_hotttnesss-desc">Song hotness (desc)</option>
+				   <option value="song_hotttnesss-asc">Song hotness (asc)</option>
+				   <option value="artist_hotttnesss-desc">Artist hotness (desc)</option>
+				   <option value="artist_hotttnesss-asc">Artist hotness (asc)</option>
+				   <option value="artist_familiarity-desc">Artist familiarity (desc)</option>
+				   <option value="artist_familiarity-asc">Artist familiarity (asc)</option>
+				   <option value="tempo-desc">Tempo (desc)</option>
+				   <option value="tempo-asc">Tempo (asc)</option>
+				   <option value="danceability-desc">Danceability (desc)</option>
+				   <option value="danceability-asc">Danceability (asc)</option>
+				   <option value="energy-desc">Energy (desc)</option>
+				   <option value="energy-asc">Energy (asc)</option>
+				</select>
+			</div>
 			<div id="reset_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
 				<label></label>
-				<div class="button_container">
+				<div class="button_container selector">
 					<input class="reset" data-theme="f" type="submit" value="Reset"/>
 				</div>
 			</div>
 			<div id="submit_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
 				<label></label>
-				<div class="button_container">
+				<div class="button_container selector">
 					<input class="submit" data-theme="b" type="submit" value="Go"/>
 				</div>
 			</div>
@@ -298,7 +316,7 @@
 		</div>
 	</div>
 	<div id="permafooter">
-		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a>, <a href="https://github.com/palmerj3/SpotifyJS">Spotify JS</a> and lots of coffee.</h3>  
+		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
 	</div>
 <script src="js/plugins.js"></script>
 <script src="js/script.js"></script>
