@@ -1,0 +1,60 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title>echospot</title>
+	<meta name="description" content="Delivering playlists, artists and songs for your Spotify consumption with the power of EchoNest.">
+	<meta name="author" content="Nick Schaden">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<link rel="icon" href="favicon.ico" />
+	<link rel="shortcut icon" href="favicon.ico" />
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png" />
+	<link rel="stylesheet" href="css/jquery.mobile-1.0.1.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<script src="js/libs/modernizr.h5bp.custom.js"></script>
+	<script src="js/libs/jquery-1.7.1.min.js"></script>
+	<script src="js/jquerymobile-custom.js"></script>
+	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
+</head>
+<body>
+	<div id="permaheader">
+		<div class="text clearfix">
+			<h1>EchoSpot</h1>
+			<h3>Spotify consumption with the power of EchoNest.</h3>
+		</div>
+		<nav class="clearfix">
+			<ul>
+				<li><a class="playlist active" href="#">Generate a Playlist</a></li>
+				<li><a class="artist" href="#">Find Artists</a></li>
+				<li><a class="song" href="#">Find Songs</a></li>
+				<li><a class="top" href="#">Top Artists</a></li>
+				<li><a class="help active" href="#">Help</a></li>
+				<li class="csv_container"><a class="csv" href="#">Download CSV</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="page textonly" data-role="page" id="search">
+		<h2>Contents
+	</div>
+	<div id="permafooter">
+		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
+	</div>
+<script src="js/plugins.js"></script>
+<script src="js/script.js"></script>
+<form id="save-csv" name="export" action="save-csv.php" method="post">
+	<input type="hidden" value="" name="csv">
+</form>
+</body>
+</html>

@@ -355,9 +355,9 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 		if (mode == 'song')
 		{
 			if (options.sortby == 'hotness')
-				options.sortby = 'artist_familiarity-desc';
+				options.sortby = 'song_hotttnesss-desc';
 			else
-				options.sortby = 'familiarity-desc';
+				options.sortby = 'artist_familiarity-desc';
 		}
 		else if (mode == 'artist')
 		{
@@ -480,7 +480,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 				$('#permaheader nav li.csv_container').show();
 			if (mode == 'artist')
 			{
-				Output.addArtistsToPage(res.artists);
+				Output.addArtistsToPage(res.artists,$('#search-sortby').val());
 				if (!res.artists.length)
 				{
 					Output.saveArtistRow('No artists found');
@@ -489,11 +489,18 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
 			}
 			else if (mode == 'song' || mode == 'playlist')
 			{
-				Output.addSongsToPage(res.songs);
+				
 				if (!res.songs.length)
 				{
 					Output.saveSongRow('No songs found');
 					Output.addContentRows();
+				}
+				else
+				{
+					if (mode == 'song')
+						Output.addSongsToPage(res.songs,$('#search-sortby').val());
+					else
+						Output.addSongsToPage(res.songs,$('#search-sortbyplaylist').val(),options);
 				}
 			}
 			Output.content.trigger('create');

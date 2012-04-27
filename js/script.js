@@ -122,7 +122,7 @@ EchoCheck = {
 					url += '&description=' + jQuery.trim(items[i]);
 				}
 			}
-			else if (options.artist && options.playlisttype && (options.playlisttype == 'artistradio' || options.playlisttype == 'artist'))
+			else if (options.artist && options.playlisttype && (options.playlisttype == 'artistradio' || options.playlisttype == 'artist' || options.playlisttype == 'songradio'))
 			{
 				var items = options.artist.split(',');
 				for (var i = 0; i < items.length; i++)
@@ -149,8 +149,6 @@ EchoCheck = {
 		else {
 			if (mode == 'song' && options.combined)
 				inputdata.combined = options.combined;
-			if (mode == 'playlist' && options.artist)
-				inputdata.artist = options.artist;
 			if (options.styles)
 				inputdata.style = options.styles;
 			if (options.moods)
@@ -217,10 +215,15 @@ EchoCheck = {
 				else
 				{
 					delete inputdata.description;
-					if (options.playlisttype == 'artist')
-						inputdata.type = 'artist';
+					if (options.playlisttype == 'songradio')
+						inputdata.type = 'song-radio';
 					else
-						inputdata.type = 'artist-radio';
+					{
+						if (options.playlisttype == 'artist')
+							inputdata.type = 'artist';
+						else
+							inputdata.type = 'artist-radio';
+					}
 				}
 				if (options.variety)
 					inputdata.variety = options.variety;
@@ -278,7 +281,7 @@ Output = {
 			content.append(this.contentRows.join('')).trigger('create');
 		this.contentRows = [];
 	},
-	addArtistsToPage: function(artists)
+	addArtistsToPage: function(artists,sortmethod)
 	{
 		for (var i = 0; i < artists.length; i++)
 		{
@@ -301,6 +304,8 @@ Output = {
 				spotlink = 'spotify://' + currartist.foreign_ids[0].foreign_id.replace('spotify-WW:','');
 			Output.saveArtistRow(currartist.name,currartist.hotttnesss,currartist.familiarity,currterms,spotlink);
 		}
+		if (typeof sortmethod == 'string')
+			Output.sortOutput(sortmethod,false);
 		Output.addContentRows();
 	},
 	addCheckboxesToPage: function(checkboxitems)
@@ -330,7 +335,7 @@ Output = {
 		if (UserAgent.mobile)
 			$('#' + id).page();
 	},
-	addSongsToPage: function(songs)
+	addSongsToPage: function(songs,sortmethod,limits)
 	{
 		for (var i = 0; i < songs.length; i++)
 		{
@@ -350,8 +355,11 @@ Output = {
 			var spotlink = '#';
 			if (typeof currsong.tracks == 'object' && typeof currsong.tracks[0] == 'object')
 				spotlink = 'spotify://' + currsong.tracks[0].foreign_id.replace('spotify-WW:','');
-			Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_hotttnesss,currsong.artist_familiarity,currsong.audio_summary.danceability,currsong.audio_summary.energy,currsong.audio_summary.tempo,spotlink);
+			if (typeof limits != 'object' || Output.filterOutput(currsong,limits))
+				Output.saveSongRow(currsong.title,currsong.artist_name,currsong.song_hotttnesss,currsong.artist_hotttnesss,currsong.artist_familiarity,currsong.audio_summary.danceability,currsong.audio_summary.energy,currsong.audio_summary.tempo,spotlink);
 		}
+		if (typeof sortmethod == 'string' && sortmethod != 'random')
+			Output.sortOutput(sortmethod,true);
 		Output.addContentRows();	
 	},
 	// note artist position is zero indexed
@@ -435,7 +443,7 @@ Output = {
 			songrowtext += '<li><a href="' + spotifylink + '" data-role="button">Spotify Link</a></li>';
 			songrowtext += '<li>SH: ' + Math.round(songhotness*100) + '%</li><li>AH: ' + Math.round(artisthotness*100) + '%</li>';
 			songrowtext += '<li>AF: ' + Math.round(artistfamiliarity*100) + '%</li><li>D: ' + Math.round(danceability*100) + '%</li>';
-			songrowtext += '<li>E: ' + Math.round(energy*100) + '%</li><li class="last">T:' + tempo + '</li>';
+			songrowtext += '<li>E: ' + Math.round(energy*100) + '%</li><li class="last">T: ' + tempo + '</li>';
 			songrowtext += '</ul></div>';
 		}
 		this.contentRows.push(songrowtext);
@@ -462,6 +470,72 @@ Output = {
 			this.plainTextContentRows = ['Artist'];
 		this.content = newcontent;
 		this.colorSpectrumIndex = 0;
+	},
+	filterOutput: function(item,limits)
+	{
+		return ((item.artist_familiarity >= limits.familiaritymin) &&
+						(item.artist_familiarity <= limits.familiaritymax) &&
+						(item.artist_hotttnesss >= limits.hotnessmin) &&
+						(item.artist_hotttnesss <= limits.hotnessmax) &&
+						(item.audio_summary.danceability >= limits.danceabilitymin) &&
+						(item.audio_summary.danceability <= limits.danceabilitymax) &&
+						(item.audio_summary.energy >= limits.energymin) &&
+						(item.audio_summary.energy <= limits.energymax) &&
+						(limits.mintempo.length == 0 || item.audio_summary.tempo >= limits.mintempo) &&
+						(limits.maxtempo.length == 0 || item.audio_summary.tempo <= limits.maxtempo) &&
+						(item.song_hotttnesss >= limits.songhotnessmin) &&
+						(item.song_hotttnesss <= limits.songhotnessmax));
+	},
+	sortOutput: function(sortvalue,songmode)
+	{
+		var sortdesc = true;
+		if (songmode)
+		{
+			if (sortvalue.indexOf('asc') > -1)
+				sortdesc = false;
+			if (sortvalue.indexOf('song_hotttnesss') > -1 || sortvalue.indexOf('hotness') > -1)
+				sortvalue = 'SH';
+			if (sortvalue.indexOf('artist_hotttnesss') > -1)
+				sortvalue = 'AH';
+			if (sortvalue.indexOf('artist_familiarity') > -1 || sortvalue.indexOf('familiarity') > -1)
+				sortvalue = 'AF';
+			if (sortvalue.indexOf('tempo') > -1)
+				sortvalue = 'T';
+			if (sortvalue.indexOf('danceability') > -1)
+				sortvalue = 'D';
+			if (sortvalue.indexOf('energy') > -1)
+				sortvalue = 'E';
+		}
+		var patt = new RegExp('>' + sortvalue + ': (\\d)+','i');
+		Output.contentRows.sort(function(a,b)
+		{
+			var matcha = a.match(patt);
+			var matchb = b.match(patt);
+			if (!matcha || !matchb) return 1;
+			var compa = parseFloat(matcha[0].match(/\d+/)[0],10);
+			var compb = parseFloat(matchb[0].match(/\d+/)[0],10);
+			return sortdesc ? compb - compa : compa - compb;
+		});
+		// recut plain text
+		var songmode = (Output.contentRows[0].match(/<h3>(.*)<\/h3>/)[1].indexOf('-') > -1);
+		if (songmode) 	
+			Output.plainTextContentRows = ['Track,Artist'];
+		else
+			Output.plainTextContentRows = ['Artist'];
+		for (i = 0; i < Output.contentRows.length; i++)
+		{
+			var name = Output.contentRows[i].match(/<h3>(.*)<\/h3>/)[1];
+			if (songmode)
+			{
+				var track = $.trim(name.match(/(.*)-/)[1]);
+				var artist = $.trim(name.match(/-(.*)/)[1]);
+				Output.plainTextContentRows.push(track + ',' + artist);
+			}
+			else
+			{
+				Output.plainTextContentRows.push(name);
+			}
+		}
 	}
 };
 
@@ -489,7 +563,7 @@ EventHandler = {
 				else
 					content = $this;
 				
-				// dyanically insert terms, related items if it's not there
+				// dynamically insert terms, related items if it's not there
 				if (!content.find('a.terms_link').length)
 				{
 					var lookupname;

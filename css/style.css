@@ -389,6 +389,11 @@ td { vertical-align: top; }
     position: relative;
   }
 
+  .page.textonly {
+    width: 700px;
+    margin: 50px 100px;
+  }
+
   ul {
     margin: 0;
     padding: 0;
