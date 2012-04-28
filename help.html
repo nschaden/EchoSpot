@@ -49,10 +49,12 @@
 		<h2>Contents</h2>
 		<ul>
 			<li><a href="#intro">Introduction</a></li>
+			<li><a href="#desc">Song and Artist Details</a></li>
 			<li><a href="#playlist">Generating playlists</a></li>
 			<li><a href="#artist">Finding artists</a></li>
 			<li><a href="#song">Finding songs</a></li>
 			<li><a href="#top">Top artists</a></li>
+			<li><a href="#download">Download a CSV</a></li>
 			<li><a href="#export">Export playlists to Spotify</a></li>
 		</ul>
 
@@ -66,19 +68,76 @@
 		<p>EchoSpot has full mobile integration for on the go as well. Just open this site on a mobile device for a completely different, jQuery Mobile
 			based experience. Clicks on spotify links here auto link into the Spotify mobile app.</p>
 
+		<h3 id="desc">Song and Artist Details</h3>
+
+		<p>After any search you'll get rows of results. An artist row has several references that appear on mouseover:</p>
+
+		<ul>
+			<li><strong>Spotify link:</strong> Click here to open up the artist in Spotify.</li>
+			<li><strong>Hotness:</strong> The relative "hotness" of this artist on a percentage scale as determined by Echonest. Buzzworthy, talked
+				about artists tend to hover above 60%.</li>
+			<li><strong>Familiarity:</strong> Artist familiarity on a percentage scale.</li>
+			<li><strong>Terms:</strong> Click here to get terms or definitions related to this artist. On the list that appears you can click on any
+				term to jump back to the 'search artists' screen and prefill with the descriptive term in question.</li>
+			<li><strong>Related Artists:</strong> Click here to get a list of related artists to explore further.</li>
+		</ul>
+
+		<p>Song rows have their own information:</p>
+
+		<ul>
+			<li><strong>Spotify link:</strong> Click here to open up the song in Spotify. In most cases, the song will autoplay immediately.</li>
+			<li><strong>sh:</strong> Song hotness, a percentage rating as defined by Echonest.</li>
+			<li><strong>ah:</strong> Artist hotness (Echonest percentage)</li>
+			<li><strong>af:</strong> Artist familiarity (Echonest percentage)</li>
+			<li><strong>d:</strong> Danceability (Echonest perentage, <a href="http://runningwithdata.com/post/1321504427/danceability-and-energy">learn more</a>)</li>
+			<li><strong>e:</strong> Energy (Echonest percentage, <a href="http://runningwithdata.com/post/1321504427/danceability-and-energy">Learn more</a>)</li>
+			<li><strong>t:</strong> Tempo or speed of the song, measured in beats per minute (bpm)</li>
+		</ul>
+
+
 		<h3 id="playlist">Generating playlists</h3>
 
 		<p>There are four types of static playlists Echonest can generate: artist radio, artist description, specific artists, and song radio. Select between
-			these with the <em>Playlist Type</em> dropdown. Artist radio requires anywhere from one to five artists entered (under <em>Artist(s)/Spotify URI(s)</em>) as the base to generate a playlist of both these artists and related artists. Specific artists is like artist radio, but it restricts 
+			these with the <em>Playlist Type</em> dropdown. Artist radio requires anywhere from one to five artists entered (under <em>Artist(s)/Spotify URI(s)</em>) as the base to generate a playlist of both these artists and related artists. A single artist can be a name description (e.g. 'Daft Punk') or a Spotify artist URI (format 'spotify:artist:XXXXXXXXX'). Specific artists is like artist radio, but it restricts 
 			the playlist naturally to just those artists. Song radio requires anywhere from one to five Spotify URIs (of the format 'spotify:track:XXXXXXX' in the <em>Artist(s)/Spotify URI(s)</em> field). Artist description requires anywhere from 1-5 terms, separated by commas (e.g. 80s, cold, funk)
 			in the <em>Descriptive terms</em> field, and generates a playlist based on those terms.</p>
 
 		<p>So while every playlist requires either the <em>Artist(s)/Spotify URI(s)</em> or <em>Descriptive terms</em> fields filled there's a lot
 			of other options to limit what comes back. Take a look at the <a href="http://developer.echonest.com/docs/v4/playlist.html#static">Echonest documentation</a> playlist for all the details.</p>
 
-		<p>As clarification to be very specific: song hotness, energy, and danceability can be set to 'high', 'average' and 'low', or combinations of that (e.g. 'high + average'). High refers to a rating above 0.7, average between 0.3 and 0.7 while low refers to ratings below 0.3. Artist familiarity
+		<p>As clarification: song hotness, energy, and danceability can be set to 'high', 'average' and 'low', or combinations of that (e.g. 'high + average'). High refers to a rating above 0.7, average between 0.3 and 0.7 while low refers to ratings below 0.3. Artist familiarity
 			can be set to 'familiar', 'average' and 'obscure' or combinations of. Familiar has a rating above 0.7, average to between 0.3 and 0.7 and low below 0.3. Finally, artist variety can be set to 'very high', 'high', 'average' and 'low'. Very high sets variety to 1, the highest setting. High sets it to 0.6, average is the default setting of 0.3, and low sets it to 0.1.</p>
 
+		<h3 id="artist">Finding artists</h3>
+
+		<p>Search for artists in two ways: either directly enter a single artist name (e.g. 'Daft Punk') in the <em>Artist(s)/Spotify URI(s)</em> field, or 
+		enter a term or series of terms (e.g. 'rock') separated by commas in the <em>Descriptive terms</em> field. Don't enter something in both fields
+		or you will get an error. Though it generally isn't as successful here, you can also use the other filters
+		to cut your search down further.</p>
+
+		<h3 id="song">Finding songs</h3>
+
+		<p>Search for songs in three ways: Enter in a single artist name (e.g. 'Daft Punk') in the <em>Artist(s)/Spotify URI(s)</em> field to get a series of songs by that artist. Alternatively, enter a song name (e.g. 'title') to hone in a single song title. Finally, you can also enter a combined artist and song name (e.g. 'radiohead karma police') to try and find a song more easily. Again, like with artists, you can use the other filters to cut down the final response, but again you may get mixed results.</p>
+
+		<h3 id="top">Top artists</h3>
+
+		<p>At any time to get a quick reference of the top 40 hottest, buzzworthy artists according to Echonest, just click on Top artists at the top
+			nav for the desktop version, at the bottom for the mobile version.</p>
+
+		<h3 id="download">Download a CSV</h3>
+
+		<p>After running any search, an additional 'Download CSV' option should appear. In desktop mode, this appears as a reference to the right
+			of Help in the navigation. In mobile mode, this is represented in the top right as the 'csv' button. In desktop mode, you'll automatically
+			download a csv file of the current results on screen. In mobile mode, a dialog will appear where you can easily select all and copy the 
+			information elsewhere.</p>
+
+		<h3 id="export">Export playlists to Spotify</h3>
+
+		<p>After downloading a CSV of songs, it's pretty easy to import those tracks into Spotify back in the form of a playlist. Running a quick Google
+			search will reveal other web sites, but I prefer <a href="http://www.ivyishere.org/">Ivy</a>. On Ivy, select 'import your playlist now' on
+			the home screen. Choose the default option of importing a playist file; click on the 'browse' button and upload your csv file. For step
+			two, select the correct song and artist columns, and follow the remaining instructions. As long as your Flash is current, a one click copy
+			should copy to your clipboard a format that's easy to paste back into Spotify.</p>
 
 
 	</div>

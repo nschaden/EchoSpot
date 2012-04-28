@@ -835,7 +835,7 @@ td { vertical-align: top; }
   }
 
   .songrow, .artistrow, .termsrow {
-    min-width: 800px;
+    min-width: 830px;
   }
 }
 
