@@ -1,6 +1,533 @@
 /* Author:
   nschaden
 */
+UserAgent = {};
+UserAgent.desktop = true;
+UserAgent.init = 'ready';
+UserAgent.pageinit = 'ready';
+UserAgent.searchPage = null;
+UserAgent.searchResultsPage = null;
+UserAgent.stylesPage = null;
+UserAgent.moodsPage = null;
+UserAgent.topPage = null;
+UserAgent.manualHistory = ['#search'];
+UserAgent.changePage = function(newpage)
+{
+  $('div.page,#permafooter').not(newpage).fadeOut(400,function()
+  {
+    $(newpage).hide().fadeIn(400,function() { if (newpage != '#search_results') $('#permafooter').show(); });
+  });
+  if (newpage != '#search_results')
+    $('#permaheader nav li.csv_container').hide();
+  if (newpage == '#search')
+  {
+    $('#permaheader nav a.top').removeClass('active');          
+    if ($('#search-byartist')[0].checked)
+      $('#permaheader nav a.artist').addClass('active');
+    else if ($('#search-byplaylist')[0].checked)
+      $('#permaheader nav a.playlist').addClass('active');
+    else
+      $('#permaheader nav a.song').addClass('active');
+  }
+  else if (newpage == '#top')
+  {
+    $('#permaheader nav a').removeClass('active');
+    $('#permaheader nav a.top').addClass('active');
+  }
+    
+  if (Modernizr.history)
+  {
+    history.pushState({page:newpage},null,'');
+    UserAgent.manualHistory.push(newpage);
+  }
+};
+if (Modernizr.history)
+{
+  // initial push on page load is always the search page
+  // history.pushState({page:'#search'})
+  window.onpopstate = function (event) 
+  {
+    // see what is available in the event object
+    if (UserAgent.manualHistory.length > 1)
+    {
+      UserAgent.manualHistory.pop();
+      var nextpage = UserAgent.manualHistory.pop();
+      UserAgent.changePage(nextpage);
+    }
+  };
+}
+
+$(function() {
+  // for hash tags that don't fall in the proper starting area, change and reload
+  var splithref = document.location.href.split('#');
+  if (splithref.length > 1 && splithref[1] != 'top' && splithref[1] != 'search')
+  {
+    document.location.href = splithref[0] + '#search';
+  }
+  // init core header options
+  $('#permaheader').find('nav li a').click(function()
+  {
+    $this = $(this);
+    if ($this.hasClass('active')) return false;
+    if ($this.hasClass('csv'))
+    {
+      var data = Output.plainTextContentRows.join('\n');
+      $('#save-csv input').val(data);
+      $('#save-csv').submit();
+    }
+    else
+    {
+      if ($('#help').length)
+      {
+        if (Modernizr.sessionstorage)
+        {
+          if ($this.hasClass('playlist'))
+            sessionStorage.setItem('startsearchsetting','playlist');
+          if ($this.hasClass('artist'))
+            sessionStorage.setItem('startsearchsetting','artist');
+          if ($this.hasClass('song'))
+            sessionStorage.setItem('startsearchsetting','song');
+        }
+        document.location.href = '/echospot';
+      }
+      if (!$('#search:visible').length && !$this.hasClass('top'))
+        UserAgent.changePage('#search');
+      $('#permaheader').find('nav li a').removeClass('active');
+      $this.addClass('active');
+      if ($this.hasClass('artist'))
+        $('#search-byartist').trigger('click');
+      if ($this.hasClass('song'))
+        $('#search-bysong').trigger('click');
+      if ($this.hasClass('playlist'))
+        $('#search-byplaylist').trigger('click');
+      if ($this.hasClass('help'))
+        document.location.href = '/echospot/help.html';
+      if ($this.hasClass('top'))
+      {
+        UserAgent.changePage('#top');
+      }
+      else
+        $('#top:visible').fadeOut(400); 
+    }
+    return false;
+  });
+});
+$(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
+{
+  EchoCheck.fetchTopTerms(false,function(res)
+  {
+    Output.setOutputToPage($('#styles'));
+    Output.addCheckboxesToPage(res.terms);
+    // move results to form
+    EventHandler.addsearchCheckboxFunctionality('styles');
+    $('#styles .content fieldset').addClass('checkbox_container').insertAfter($('#styles_container'));
+    $('#search-styles').on('click',function() { $('#styles_container').next().toggle(400); return false; });      
+
+    EchoCheck.fetchTopTerms(true,function(res)
+    {
+      Output.setOutputToPage($('#moods'));
+      Output.addCheckboxesToPage(res.terms);
+      // move results to form
+      EventHandler.addsearchCheckboxFunctionality('moods');
+      $('#moods .content fieldset').addClass('checkbox_container').insertAfter($('#moods_container'));
+      $('#search-moods').on('click',function() { $('#moods_container').next().toggle(400); return false; });
+    });
+  });
+
+  $('#search').find('#search-byartist,#search-bysong').on('click',function()
+  {
+    $('#search').find('.playlistonly').addClass('inactive');
+    $('#search').find('.hideonplaylist').removeClass('inactive');
+    if ($(this).attr('id') == 'search-bysong')
+      $('#search-artist').siblings('label').text('Find artist/track');
+    else
+      $('#search-artist').siblings('label').text('Find artist');
+    if ($(this).attr('id') == 'search-bysong')
+      $('#search-hotness').siblings('label').text('Song hotness');
+    else
+      $('#search-hotness').siblings('label').text('Artist hotness');
+    if (Modernizr.sessionstorage)
+      sessionStorage.setItem('startsearchsetting',$(this).attr('id').replace('search-by',''));
+  });
+
+  $('#search').find('#search-byplaylist').on('click',function()
+  {
+    $('#search').find('.playlistonly').removeClass('inactive');
+    $('#search').find('.hideonplaylist').addClass('inactive');
+    $('#search-artist').siblings('label').text('Artist(s)/Spotify URI(s)');
+    $('#search-hotness').siblings('label').text('Artist hotness');
+    if (Modernizr.sessionstorage)
+      sessionStorage.setItem('startsearchsetting','playlist');
+  });
+
+  $('#search').find('input.reset').on('click',function()
+  {
+    $('#search-artist,#search-terms').removeClass('error').siblings('.errorlabel').remove();
+    $('#search-artist').val('');
+    Output.clearCheckboxesPage('styles');
+    Output.clearCheckboxesPage('moods');
+    $('#search-startyear')[0].selectedIndex = 0;
+    $('#search-endyear')[0].selectedIndex = 0;
+    $('#search-terms').val('');
+    $('#search-playlisttype')[0].selectedIndex = 0;
+    $('#search-hotness')[0].selectedIndex = 0;
+    $('#search-songhotness')[0].selectedIndex = 0;
+    $('#search-familiarity')[0].selectedIndex = 0;
+    $('#search-sortby')[0].selectedIndex = 0;
+    $('#search-sortbyplaylist')[0].selectedIndex = 0;
+    $('#search-variety')[0].selectedIndex = 2;
+    $('#search-distribution')[0].selectedIndex = 0;
+    $('#search-mintempo').val('');
+    $('#search-maxtempo').val('');
+    $('#search-energy')[0].selectedIndex = 0;
+    $('#search-danceability')[0].selectedIndex = 0;
+    $('#search-results')[0].selectedIndex = 1;
+  });
+  
+  $('#search').find('input.submit').on('click',function()
+  {
+    var searchpage = $('#search');
+    var mode = 'artist';
+    mode = $.trim($('#permaheader .active').attr('class').replace('active',''));
+
+    var options = {};
+    if (mode == 'song')
+    {
+      options.combined = jQuery.trim($('#search-artist').val());
+    }
+    else
+    {
+      options.artist = jQuery.trim($('#search-artist').val());
+    }
+    // simple error checking
+    $('#search-artist,#search-terms').removeClass('error').siblings('.errorlabel').remove();
+    if (mode != 'artist')
+    {
+      var checkitem = '';
+      if (mode != 'playlist' || $('#search-playlisttype').val() != 'artistdescription')
+        checkitem = '#search-artist';
+      else
+        checkitem = '#search-terms';
+      if (!$.trim($(checkitem).val()).length)
+      {
+        $(checkitem).addClass('error').focus().after('<p class="errorlabel">Required field</p>');
+        return;
+      }
+    }
+    else
+    {
+      if (!$.trim($('#search-artist').val()).length && !$.trim($('#search-terms').val()).length)
+      {
+        $('#search-artist,#search-terms').addClass('error').focus().after('<p class="errorlabel">Required field - artist or term</p>');
+        return;
+      } 
+    }
+    Output.setOutputToPage($('#search_results'));
+    $('#permaheader nav a').removeClass('active');
+    $('#search_results').addClass('loading');
+    var existingresults;
+    existingresults = Output.content.children();
+    if (existingresults.length)
+    {
+      existingresults.remove();
+    }
+    else
+      EventHandler.addArtistMenusFunctionality(Output.content);
+    UserAgent.changePage('#search_results');
+    
+    options.styles = $('#search-styles').text().replace('-','');
+    options.moods = $('#search-moods').text().replace('-','');
+    options.startyear = $('#search-startyear').val();
+    if (options.startyear == 'Start Year')
+      options.startyear = null;
+    else
+      options.startyear = parseInt(options.startyear,10)-1;
+    options.endyear = $('#search-endyear').val();
+    if (options.endyear == 'End Year')
+      options.endyear = null;
+    else
+      options.endyear = parseInt(options.endyear,10)+1;
+    options.description = jQuery.trim($('#search-terms').val());
+    var hotness = $('#search-hotness').val();
+    options.hotnessmin = 0;
+    options.hotnessmax = 1;
+    if (hotness == 'high')
+    {
+      options.hotnessmin = 0.7;
+    }
+    if (hotness == 'highaverage')
+    {
+      options.hotnessmin = 0.3;
+      options.hotnessmax = 1;
+    }
+    if (hotness == 'average')
+    {
+      options.hotnessmin = 0.3;
+      options.hotnessmax = 0.7;
+    }
+    if (hotness == 'lowaverage')
+    {
+      options.hotnessmin = 0;
+      options.hotnessmax = 0.7;
+    }
+    if (hotness == 'low')
+    {
+      options.hotnessmax = 0.3;
+    }
+    var familiarity = $('#search-familiarity').val();
+    options.familiaritymin = 0;
+    options.familiaritymax = 1;
+    if (familiarity == 'wellknown')
+    {
+      options.familiaritymin = 0.7;
+    }
+    if (familiarity == 'wellknownaverage')
+    {
+      options.familiaritymin = 0.3;
+      options.familiaritymax = 1;
+    }
+    if (familiarity == 'average')
+    {
+      options.familiaritymin = 0.3;
+      options.familiaritymax = 0.7;
+    }
+    if (familiarity == 'obscureaverage')
+    {
+      options.familiaritymin = 0;
+      options.familiaritymax = 0.7;
+    }
+    if (familiarity == 'obscure')
+    {
+      options.familiaritymax = 0.3;
+    }
+    options.results = $('#search-results').val();
+    options.sortby = $('#search-sortby').val();
+    if (mode == 'song')
+    {
+      if (options.sortby == 'hotness')
+        options.sortby = 'song_hotttnesss-desc';
+      else
+        options.sortby = 'artist_familiarity-desc';
+    }
+    else if (mode == 'artist')
+    {
+      if (options.sortby == 'hotness')
+        options.sortby = 'hotttnesss-desc';
+      else
+        options.sortby = 'familiarity-desc';  
+    }
+    else
+      delete options.sortby;
+    if (mode == 'playlist')
+    {
+      options.playlisttype = $('#search-playlisttype').val();
+      var variety = $('#search-variety').val();
+      options.variety = 0.3;
+      if (variety == 'very high')
+      {
+        options.variety = 1;
+      }
+      if (variety == 'high')
+      {
+        options.variety = 0.6;
+      }
+      if (variety == 'average')
+      {
+        options.variety = 0.3;
+      }
+      if (variety == 'low')
+      {
+        options.variety = 0.1;
+      }
+      options.distribution = $('#search-distribution').val();
+      options.mintempo = $('#search-mintempo').val();
+      options.maxtempo = $('#search-maxtempo').val();
+      var songhotness = $('#search-songhotness').val();
+      options.songhotnessmin = 0;
+      options.songhotnessmax = 1;
+      if (songhotness == 'high')
+      {
+        options.songhotnessmin = 0.7;
+      }
+      if (songhotness == 'highaverage')
+      {
+        options.songhotnessmin = 0.3;
+        options.songhotnessmax = 1;
+      }
+      if (songhotness == 'average')
+      {
+        options.songhotnessmin = 0.3;
+        options.songhotnessmax = 0.7;
+      }
+      if (songhotness == 'lowaverage')
+      {
+        options.songhotnessmin = 0;
+        options.songhotnessmax = 0.7;
+      }
+      if (songhotness == 'low')
+      {
+        options.songhotnessmax = 0.3;
+      }
+      var energy = $('#search-energy').val();
+      options.energymin = 0;
+      options.energymax = 1;
+      if (energy == 'high')
+      {
+        options.energymin = 0.7;
+      }
+      if (energy == 'highaverage')
+      {
+        options.energymin = 0.3;
+        options.energymax = 1;
+      }
+      if (energy == 'average')
+      {
+        options.energymin = 0.3;
+        options.energymax = 0.7;
+      }
+      if (energy == 'lowaverage')
+      {
+        options.energymin = 0;
+        options.energymax = 0.7;
+      }
+      if (energy == 'low')
+      {
+        options.energymax = 0.3;
+      }
+      var danceability = $('#search-danceability').val();
+      options.danceabilitymin = 0;
+      options.danceabilitymax = 1;
+      if (danceability == 'high')
+      {
+        options.danceabilitymin = 0.7;
+      }
+      if (danceability == 'highaverage')
+      {
+        options.danceabilitymin = 0.3;
+        options.danceabilitymax = 1;
+      }
+      if (danceability == 'average')
+      {
+        options.danceabilitymin = 0.3;
+        options.danceabilitymax = 0.7;
+      }
+      if (danceability == 'lowaverage')
+      {
+        options.danceabilitymin = 0;
+        options.danceabilitymax = 0.7;
+      }
+      if (danceability == 'low')
+      {
+        options.danceabilitymax = 0.3;
+      }
+      options.sortbyplaylist = $('#search-sortbyplaylist').val();
+    }
+    EventHandler.addArtistMenusFunctionality(Output.content);
+    EchoCheck.powerSearch(mode,options,function(res)
+    {
+      $('#search_results').removeClass('loading');
+      $('#permaheader nav li.csv_container').show();
+      if (mode == 'artist')
+      {
+        Output.addArtistsToPage(res.artists,$('#search-sortby').val());
+        if (!res.artists.length)
+        {
+          Output.saveArtistRow('No artists found');
+          Output.addContentRows();
+        } 
+      }
+      else if (mode == 'song' || mode == 'playlist')
+      {
+        
+        if (!res.songs.length)
+        {
+          Output.saveSongRow('No songs found');
+          Output.addContentRows();
+        }
+        else
+        {
+          if (mode == 'song')
+            Output.addSongsToPage(res.songs,$('#search-sortby').val());
+          else
+            Output.addSongsToPage(res.songs,$('#search-sortbyplaylist').val(),options);
+        }
+      }
+      Output.content.trigger('create');
+      $('#permafooter').show();
+    });
+  });
+
+  $('#search-artist').on('keypress',function(e)
+  {
+    if (e.keyCode == 13 && !e.ctrlKey && !e.shiftKey && !e.altKey)
+      $('#search').find('input.submit').trigger('click');
+  });
+
+  // auto select mode based on initial href
+  if (Modernizr.sessionstorage && !$('#help').length)
+  {
+    var startsetting = sessionStorage.getItem('startsearchsetting');
+    if (startsetting == 'song')
+    {
+      $('#search-byartist').prop('checked',false);
+      $('#search-bysong').trigger('click').prop('checked',true);
+      $('#permaheader').find('nav li a').removeClass('active');
+      $('#permaheader a.song').addClass('active');
+    }
+    if (startsetting == 'playlist')
+    {
+      $('#search-byartist').prop('checked',false);
+      $('#search-byplaylist').trigger('click').prop('checked',true);
+      $('#permaheader').find('nav li a').removeClass('active');
+      $('#permaheader a.playlist').addClass('active');
+    }
+    if (startsetting == 'artist')
+    {
+      $('#search-byartist').trigger('click').prop('checked',true);
+      $('#permaheader').find('nav li a').removeClass('active');
+      $('#permaheader a.artist').addClass('active');
+    }
+  }
+
+  $(document).unbind(UserAgent.pageinit + '.search');
+});
+$(document).on(UserAgent.pageinit + '.searchresults',UserAgent.searchResultsPage,function()
+{
+  $('#plaintext_link').on('click',function()
+  {
+    if (typeof Output == 'object')
+    {
+      $('#plaintext textarea').html(Output.plainTextContentRows.join('\n'));
+    }
+  });
+  $(document).unbind(UserAgent.pageinit + '.searchresults');  
+});
+$(document).on(UserAgent.pageinit + '.styles',UserAgent.stylesPage,function()
+{
+  EventHandler.addsearchCheckboxFunctionality('styles');
+  $(document).unbind(UserAgent.pageinit + '.styles');
+});
+$(document).on(UserAgent.pageinit + '.moods',UserAgent.moodsPage,function()
+{
+  EventHandler.addsearchCheckboxFunctionality('moods');
+  $(document).unbind('UserAgent.pageinit.moods');
+});
+$(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
+{
+  Output.setOutputToPage($('#top'));
+  // have extra JQuery based animation for collapsible menus, add on demand terms and related items
+  EventHandler.addArtistMenusFunctionality(Output.content);
+
+  // fetch artists from echonest
+  EchoCheck.fetchTopHotArtists(40,function(res)
+  {
+    Output.setOutputToPage($('#top'));
+    Output.addArtistsToPage(res.artists);
+    Output.content.trigger('create');
+  });
+  $(document).unbind(UserAgent.pageinit + '.top');
+});
+
 EchoCheck = {
   api: 'PWNYOEPUNHQTGZLHY',
   base: 'http://developer.echonest.com/api/v4/',
@@ -32,7 +559,7 @@ EchoCheck = {
           $('#search_results').removeClass('loading');
           Output.saveArtistRow('Unexpected error from server.');
           Output.addContentRows();
-          $.mobile.changePage('#search_results');
+          UserAgent.changePage('#search_results');
         }       
       },
       timeout: 4000
@@ -56,7 +583,7 @@ EchoCheck = {
           $('#search_results').removeClass('loading');
           Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
           Output.addContentRows();
-          $.mobile.changePage('#search_results');
+          UserAgent.changePage('#search_results');
         }
       } 
       else 
@@ -76,7 +603,7 @@ EchoCheck = {
         Output.setOutputToPage($('#search_results'));
         Output.saveArtistRow('Unexpected error from server. ' + data.response.status.message);
         Output.addContentRows();
-        $.mobile.changePage('#search_results');
+        UserAgent.changePage('#search_results');
       }
     }
     return false; 
@@ -328,12 +855,7 @@ Output = {
     id = id.replace(/\s+/g,'_');
     var emptypagetext = '<div class="page" data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
               '</h1></div><div data-role="content"></div>' + this.footerContent + ' </div>';
-    if (UserAgent.mobile)
-      $('body').append(emptypagetext);
-    else
-      $('#permafooter').before(emptypagetext);
-    if (UserAgent.mobile)
-      $('#' + id).page();
+    $('#permafooter').before(emptypagetext);
   },
   addSongsToPage: function(songs,sortmethod,limits)
   {
@@ -368,10 +890,7 @@ Output = {
     var artistrow = this.content.children().eq(artistpos);
     if (!artistrow.length) return;
     var list;
-    if (UserAgent.mobile)
-      list = artistrow.find('.ui-collapsible-content > .ui-listview');
-    else
-      list = artistrow.find('ul');
+    list = artistrow.find('ul');
     list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
   },
   addSpotifyLinkToSongRow: function(link,songpos)
@@ -379,26 +898,14 @@ Output = {
     var songrow = this.content.children().eq(songpos);
     if (!songrow.length) return;
     var list;
-    if (UserAgent.mobile)
-      list = songrow.find('.ui-collapsible-content > .ui-listview');
-    else
-      list = songrow.find('ul');
+    list = songrow.find('ul');
     list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
   },
   clearCheckboxesPage: function(pageid)
   {
-    if (UserAgent.mobile)
-    {
-      var checkeditems = $('#' + pageid).find('input').filter(':checked');
-      checkeditems.prop('checked',false).checkboxradio('refresh');
-      $('#search-' + pageid).find('.ui-btn-text').text('-');
-    }
-    else
-    {
-      var checkeditems2 = $('#search').find('input').filter(':checked');
-      checkeditems2.prop('checked',false);
-      $('#search-' + pageid).text('-');
-    }
+    var checkeditems2 = $('#search').find('input').filter(':checked');
+    checkeditems2.prop('checked',false);
+    $('#search-' + pageid).text('-');
   },
   saveArtistRow: function(name,hotness,familiarity,terms,spotifylink)
   {
@@ -544,41 +1051,26 @@ EventHandler = {
   {
     var targetevent = 'click';
     var target = '.ui-collapsible-heading a';
-    if (UserAgent.desktop)
-    {
-      targetevent = 'mouseover';
-      target = 'div.artistrow,div.songrow';
-    }
+    targetevent = 'mouseover';
+    target = 'div.artistrow,div.songrow';
     content.on(targetevent,target,function() 
     { 
       $this = $(this);
-      if ((UserAgent.mobile && !$this.parent().hasClass('ui-collapsible-heading-collapsed')) || (UserAgent.desktop && !$this.find('a.terms_link:visible').length))
+      if (!$this.find('a.terms_link:visible').length)
       {
         var content;
-        if (UserAgent.mobile)
-        {
-          content = $this.parent().siblings('.ui-collapsible-content');
-          content.stop(true,true).slideUp(0);
-        }
-        else
-          content = $this;
+        content = $this;
         
         // dynamically insert terms, related items if it's not there
         if (!content.find('a.terms_link').length)
         {
           var lookupname;
-          if (UserAgent.mobile)
-            lookupname = jQuery.trim($this.find('span.ui-btn-text').html().replace(/<span(.*)<\/span>/,''));
-          else
-            lookupname = jQuery.trim($this.find('h3').html().replace(/<span(.*)<\/span>/,''));
+          lookupname = jQuery.trim($this.find('h3').html().replace(/<span(.*)<\/span>/,''));
           var detail = Output.artistDetail[lookupname];
           if (typeof detail == 'object')
           {
             var listview;
-            if (UserAgent.mobile)
-              listview = content.find('ul.ui-listview');
-            else
-              listview = content.find('ul');
+            listview = content.find('ul');
             var listviewcontents = listview.html();
             var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
             newlisttext += '<li class="last"><a class="related_link" href="#">Related artists</a></li></ul>';
@@ -589,14 +1081,13 @@ EventHandler = {
           content.on('click','a.terms_link',function()
           {
             // check if page exists
-            if (UserAgent.desktop)
-              $('#permaheader').find('nav a.top').removeClass('active');
+            $('#permaheader').find('nav a.top').removeClass('active');
             var termspageid = lookupname.replace(/\s+/g,'') + '_terms';
             if (!$('#' + termspageid).length)
             {
               $(document).on('pageinit.temppage','#' + termspageid,function()
               {
-                $.mobile.changePage('#' + termspageid);
+                UserAgent.changePage('#' + termspageid);
                 // add event handlers for terms
                 $('#' + termspageid).on('click','li',function()
                 {
@@ -613,34 +1104,30 @@ EventHandler = {
               }
               termstext += '</ul>';
               Output.content.append(termstext).trigger('create');
-              if (UserAgent.desktop)
+              UserAgent.changePage('#' + termspageid);
+              $('#' + termspageid).on('click','a',function()
               {
-                $.mobile.changePage('#' + termspageid);
-                $('#' + termspageid).on('click','a',function()
-                {
-                  $('#search-terms').val(jQuery.trim($(this).text()));
-                  $.mobile.changePage('#search');
-                  $('#permaheader nav a.artist').trigger('click');
-                  return false;
-                });
-              }
+                $('#search-terms').val(jQuery.trim($(this).text()));
+                UserAgent.changePage('#search');
+                $('#permaheader nav a.artist').trigger('click');
+                return false;
+              });
             }
             else
-              $.mobile.changePage('#' + termspageid);
+              UserAgent.changePage('#' + termspageid);
             return false;
           });
           // clicking on related link event handler
           content.on('click','a.related_link',function()
           {
             // check if page exists
-            if (UserAgent.desktop)
-              $('#permaheader').find('nav a.top').removeClass('active');
+            $('#permaheader').find('nav a.top').removeClass('active');
             var relatedartistpageid = lookupname.replace(/\s+/g,'') + '_related';
             if (!$('#' + relatedartistpageid).length)
             {
               $(document).on('pageinit.temppage','#' + relatedartistpageid,function()
               {
-                $.mobile.changePage('#' + relatedartistpageid);
+                UserAgent.changePage('#' + relatedartistpageid);
                 $(document).unbind('pageinit.temppage');
               });
               Output.addNewPage(relatedartistpageid,lookupname + ' related artists','related');
@@ -650,25 +1137,14 @@ EventHandler = {
               {
                 Output.addArtistsToPage(res.artists);
               });
-              if (UserAgent.desktop)
-              {
-                $.mobile.changePage('#' + relatedartistpageid);
-                return false;
-              }
+              UserAgent.changePage('#' + relatedartistpageid);
+              return false;
             }
             else
-              $.mobile.changePage('#' + relatedartistpageid);             
+              UserAgent.changePage('#' + relatedartistpageid);             
           });
         }
-        if (UserAgent.mobile)
-          content.slideDown(400,'linear');
-        else
-          $this.find('a.terms_link,a.related_link').parent().show();
-      }
-      else
-      {
-        if (UserAgent.mobile)
-          $this.parent().siblings('.ui-collapsible-content').stop(true,true).slideDown(0).slideUp(400,'linear'); 
+        $this.find('a.terms_link,a.related_link').parent().show();
       }
     });
   },
@@ -677,24 +1153,15 @@ EventHandler = {
     var fieldcontainer = $('#' + pageid).find('fieldset');
     if (!fieldcontainer.length) return;
     var target;
-    if (UserAgent.mobile)
-      target = 'input[type="checkbox"]';
-    else
-      target = 'label';
+    target = 'label';
     fieldcontainer.find(target).click(function()
     {
       var checkedfield;
-      if (UserAgent.mobile)
-        checkedfield = $(this).attr('name').replace('style-','').replace('_',' ');
-      else
-        checkedfield = $(this).prev().attr('name').replace('style-','').replace('_',' ');
+      checkedfield = $(this).prev().attr('name').replace('style-','').replace('_',' ');
       var textcontainer;
-      if (UserAgent.mobile)
-        textcontainer = $('#search-' + pageid).find('.ui-btn-text');
-      else
-        textcontainer = $('#search-' + pageid);
+      textcontainer = $('#search-' + pageid);
       var text = jQuery.trim(textcontainer.text());
-      if (this.checked || (UserAgent.desktop && !$(this).prev()[0].checked))
+      if (this.checked || (!$(this).prev()[0].checked))
       {
         if (text == '-')
         {

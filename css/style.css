@@ -541,7 +541,8 @@ td { vertical-align: top; }
     background-image: linear-gradient(top, rgb(144, 152, 164), rgb(110, 118, 130));
   }
 
-  #permaheader nav .csv_container {
+  #permaheader nav .spot_container,
+  #peramheader nav .csv_container {
     display: none;
   }
 

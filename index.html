@@ -12,21 +12,16 @@
 	<meta name="author" content="Nick Schaden">
 
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="viewport" content="width=device-width">
 
-	<link rel="icon" href="favicon.ico" />
-	<link rel="shortcut icon" href="favicon.ico" />
-	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png" />
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png" />
-	<link rel="stylesheet" href="css/jquery.mobile-1.0.1.css">
+	<link rel="icon" href="favicon.ico">
+	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png">
 	<link rel="stylesheet" href="css/style.css">
-
 	<script src="js/libs/modernizr.h5bp.custom.js"></script>
-	<script src="js/libs/jquery-1.7.1.min.js"></script>
-	<script src="js/jquerymobile-custom.js"></script>
-	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
 </head>
 <body>
 	<div id="permaheader">
@@ -41,7 +36,8 @@
 				<li><a class="song" href="#">Find Songs</a></li>
 				<li><a class="top" href="#">Top Artists</a></li>
 				<li><a class="help" href="help.html">Help</a></li>
-				<li class="csv_container"><a class="csv" href="#">Download CSV</a></li>
+				<li class="spot_container"><a class="spotify_copy" href="#">Playlist</a></li>
+				<li class="csv_container"><a class="csv" href="#">CSV</a></li>
 			</ul>
 		</nav>
 	</div>
@@ -53,11 +49,11 @@
 			<div class="fieldcontain" data-role="fieldcontain">
 				<fieldset class="searchbyarea" data-role="controlgroup" data-type="horizontal">
 					<legend></legend>
-					<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" checked="checked" />
+					<input type="radio" name="search-by" id="search-byplaylist" name="search-byplaylist" value="byplaylist" checked="checked">
          			<label for="search-byplaylist">Playlist</label>
-					<input type="radio" name="search-by" id="search-byartist" value="byartist" />
+					<input type="radio" name="search-by" id="search-byartist"  name="search-byartist" value="byartist">
          			<label for="search-byartist">Artist</label>
-         			<input type="radio" name="search-by" id="search-bysong" value="bysong" />
+         			<input type="radio" name="search-by" id="search-bysong" name="search-byartist"  value="bysong">
          			<label for="search-bysong">Song</label>
 				</fieldset>
 			</div>
@@ -320,10 +316,11 @@
 	<div id="permafooter">
 		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
 	</div>
-<script src="js/plugins.js"></script>
-<script src="js/script.js"></script>
 <form id="save-csv" name="export" action="save-csv.php" method="post">
 	<input type="hidden" value="" name="csv">
 </form>
+
+<script src="js/libs/jquery-1.7.1.min.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
