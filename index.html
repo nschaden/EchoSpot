@@ -20,8 +20,8 @@
 	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png">
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png">
-	<link rel="stylesheet" href="css/style.css">
-	<script src="js/libs/modernizr.h5bp.custom.js"></script>
+	<link rel="stylesheet" href="css/style.min.css">
+	<script src="js/libs/modernizr.custom.min.js"></script>
 </head>
 <body>
 	<div id="permaheader">
@@ -36,45 +36,45 @@
 				<li><a class="song" href="#">Find Songs</a></li>
 				<li><a class="top" href="#">Top Artists</a></li>
 				<li><a class="help" href="help.html">Help</a></li>
-				<li class="spot_container"><a class="spotify_copy" href="#">Playlist</a></li>
+				<li class="spot_container"><a class="playlist_generate" href="#">Playlist</a></li>
 				<li class="csv_container"><a class="csv" href="#">CSV</a></li>
 			</ul>
 		</nav>
 	</div>
-	<div class="page" data-role="page" id="search">
-		<div class="header" data-role="header">
-			<h1>Power Search</h1>
+	<div class="page"  id="search">
+		<div class="header" >
+			<h2>Power Search</h2>
 		</div>
-		<div class="content" data-role="content">
-			<div class="fieldcontain" data-role="fieldcontain">
-				<fieldset class="searchbyarea" data-role="controlgroup" data-type="horizontal">
+		<div class="content" >
+			<div class="fieldcontain" >
+				<fieldset class="searchbyarea" >
 					<legend></legend>
-					<input type="radio" name="search-by" id="search-byplaylist" name="search-byplaylist" value="byplaylist" checked="checked">
-         			<label for="search-byplaylist">Playlist</label>
-					<input type="radio" name="search-by" id="search-byartist"  name="search-byartist" value="byartist">
-         			<label for="search-byartist">Artist</label>
-         			<input type="radio" name="search-by" id="search-bysong" name="search-byartist"  value="bysong">
-         			<label for="search-bysong">Song</label>
+         	<label>Playlist</label>
+					<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" checked="checked">
+         	<label>Artist</label>
+					<input type="radio" name="search-by" id="search-byartist" value="byartist">
+         	<label>Song</label>
+         	<input type="radio" name="search-by" id="search-bysong" value="bysong">
 				</fieldset>
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<label for="name">Artist name</label>
-				<input type="text" name="artist" id="search-artist" value="" />
+			<div class="fieldcontain" >
+				<label for="search-artist">Artist name</label>
+				<input type="text" name="artist" id="search-artist" value="">
 			</div>
-			<div id="styles_container" class="fieldcontain" data-role="fieldcontain">
-			 	<label for="styles">Styles</label>
+			<div id="styles_container" class="fieldcontain" >
+			 	<label>Styles</label>
 			 	<div class="button_container">
-					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#styles" id="search-styles">-</a>
+					<a href="#styles" id="search-styles">-</a>
 				</div>
 			</div>
-			<div id="moods_container" class="fieldcontain" data-role="fieldcontain">
-				<label for="moods">Moods</label>
+			<div id="moods_container" class="fieldcontain" >
+				<label>Moods</label>
 				<div class="button_container">
-					<a data-icon="arrow-r" data-iconpos="right" data-role="button" href="#moods" id="search-moods">-</a>
+					<a data-icon="arrow-r" data-iconpos="right"  href="#moods" id="search-moods">-</a>
 				</div>
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<fieldset class="daterange_container" data-role="controlgroup" data-type="horizontal">
+			<div class="fieldcontain" >
+				<fieldset class="daterange_container"  >
 					<legend>Date Range</legend>
 					<select name="startyear" id="search-startyear">
 					   <option>Start Year</option>
@@ -86,12 +86,12 @@
 					</select>
 				</fieldset>
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<label for="name">Descriptive terms</label>
+			<div class="fieldcontain" >
+				<label for="search-terms">Descriptive terms</label>
 				<input type="text" name="terms" id="search-terms" value=""  />
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Playlist Type</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-playlisttype">Playlist Type</label>
 				<select name="energy" id="search-playlisttype">
 				   <option value="artistradio">Artist Radio</option>
 				   <option value="artistdescription">Artist Description</option>
@@ -99,8 +99,8 @@
 				   <option value="songradio">Song Radio</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Artist variety</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-variety">Artist variety</label>
 				<select name="variety" id="search-variety">
 				   <option value="very high">Very high</option>
 				   <option value="high">High</option>
@@ -108,23 +108,23 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Artist distribution</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-distribution">Artist distribution</label>
 				<select name="variety" id="search-distribution">
 				   <option value="focused">Focused</option>
 				   <option value="wandering">Wandering</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="name">Minimum song tempo (bpm)</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-mintempo">Minimum song tempo (bpm)</label>
 				<input type="text" name="mintempo" id="search-mintempo" value=""  />
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="name">Maximum song tempo (bpm)</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-maxtempo">Maximum song tempo (bpm)</label>
 				<input type="text" name="maxtempo" id="search-maxtempo" value=""  />
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<label for="hotness">Artist hotness</label>
+			<div class="fieldcontain" >
+				<label for="search-hotness">Artist hotness</label>
 				<select name="hotness" id="search-hotness">
 				   <option>-</option>
 				   <option value="high">High</option>
@@ -134,8 +134,8 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Song hotness</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-songhotness">Song hotness</label>
 				<select name="variety" id="search-songhotness">
 				   <option>-</option>
 				   <option value="high">High</option>
@@ -145,8 +145,8 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<label for="familiarity">Artist familiarity</label>
+			<div class="fieldcontain" >
+				<label for="search-familiarity">Artist familiarity</label>
 				<select name="familiarity" id="search-familiarity">
 				   <option>-</option>
 				   <option value="wellknown">Well Known</option>
@@ -156,8 +156,8 @@
 				   <option value="obscure">Obscure</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Song energy</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-energy">Song energy</label>
 				<select name="energy" id="search-energy">
 				   <option>-</option>
 				   <option value="high">High</option>
@@ -167,8 +167,8 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="variety">Song danceability</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-danceability">Song danceability</label>
 				<select name="danceability" id="search-danceability">
 				   <option>-</option>
 				   <option value="high">High</option>
@@ -178,23 +178,23 @@
 				   <option value="low">Low</option>
 				</select>
 			</div>
-			<div class="fieldcontain" data-role="fieldcontain">
-				<label for="results">Results</label>
+			<div class="fieldcontain" >
+				<label for="search-results">Results</label>
 				<select name="results" id="search-results">
 				   <option value="100">100</option>
 				   <option value="50" selected="selected">50</option>
 				   <option value="20">20</option>
 				</select>
 			</div>
-			<div class="fieldcontain hideonplaylist inactive" data-role="fieldcontain">
-				<label for="sortby">Sort by</label>
+			<div class="fieldcontain hideonplaylist inactive" >
+				<label for="search-sortby">Sort by</label>
 				<select name="sortby" id="search-sortby">
 				   <option value="hotness">Hotness</option>
 				   <option value="familiarity">Familiarity</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" data-role="fieldcontain">
-				<label for="sortbyplaylist">Sort by</label>
+			<div class="fieldcontain playlistonly" >
+				<label for="search-sortbyplaylist">Sort by</label>
 				<select name="sortbyplaylist" id="search-sortbyplaylist">
 				   <option value="random">Random</option>
 				   <option value="song_hotttnesss-desc">Song hotness (desc)</option>
@@ -211,116 +211,75 @@
 				   <option value="energy-asc">Energy (asc)</option>
 				</select>
 			</div>
-			<div id="reset_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
+			<div id="reset_container" class="submit_wrapper fieldcontain" >
 				<label></label>
 				<div class="button_container selector">
-					<input class="reset" data-theme="f" type="submit" value="Reset"/>
+					<input class="reset"  type="submit" value="Reset">
 				</div>
 			</div>
-			<div id="submit_container" class="submit_wrapper fieldcontain" data-role="fieldcontain">
+			<div id="submit_container" class="submit_wrapper fieldcontain" >
 				<label></label>
 				<div class="button_container selector">
-					<input class="submit" data-theme="b" type="submit" value="Go"/>
+					<input class="submit"  type="submit" value="Go">
 				</div>
 			</div>
 			<div class="clearfix"></div>
 		</div>
-		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
-			<div data-role="navbar" data-iconpos="top">
-				<ul>
-					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
-					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
-				</ul>
-			</div>
-		</div>
 	</div>
-	<div class="page" data-role="page" id="search_results">
-		<div class="header" data-role="header">
-			<h1>Search Results</h1>
-			<a href="#plaintext" id="plaintext_link" data-icon="gear" data-rel="dialog" class="ui-btn-right">csv</a>
-		</div>
-		<div class="content" data-role="content">
+	<div class="page"  id="search_results">
+		<div class="content" >
 
 		</div>
-		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
-			<div data-role="navbar" data-iconpos="top">
-				<ul>
-					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
-					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
-				</ul>
-			</div>
-		</div>
 	</div>
-	<div class="page" data-role="page" id="plaintext">
-		<div class="header" data-role="header">
-			<h1>Plain Text</h1>
+	<div class="page" id="styles">
+		<div class="header" >
+			<h2>Styles</h2>
 		</div>
-		<div class="content" data-role="content">
-			<textarea></textarea>
-		</div>
-		<div class="footer" data-id="footer">
-		</div>
-	</div>
-	<div class="page" data-role="page" id="styles">
-		<div class="header" data-role="header">
-			<h1>Styles</h1>
-		</div>
-		<div class="content" data-role="content">
-			<fieldset data-role="controlgroup">
+		<div class="content" >
+			<fieldset >
 				
 			</fieldset>
 		</div>
-		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
-			<div data-role="navbar" data-iconpos="top">
-				<ul>
-					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
-					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
-				</ul>
-			</div>
-		</div>
 	</div>
-	<div class="page" data-role="page" id="moods">
-		<div class="header" data-role="header">
-			<h1>Moods</h1>
+	<div class="page"  id="moods">
+		<div class="header" >
+			<h2>Moods</h2>
 		</div>
-		<div class="content" data-role="content">
-			<fieldset data-role="controlgroup">
+		<div class="content" >
+			<fieldset >
 
 			</fieldset>
 		</div>
-		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
-			<div data-role="navbar" data-iconpos="top">
-				<ul>
-					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
-					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
-				</ul>
-			</div>
-		</div>
 	</div>
-	<div class="page" data-role="page" id="top">
-		<div class="header" data-role="header">
-			<h1>Hot Artists</h1>
+	<div class="page"  id="top">
+		<div class="header" >
+			<h2>Hot Artists</h2>
 		</div>
-		<div class="content" data-role="content">
+		<div class="content" >
 
 		</div>
-		<div class="footer" data-id="footer" data-position="fixed" data-role="footer">
-			<div data-role="navbar" data-iconpos="top">
-				<ul>
-					<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>
-					<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>
-				</ul>
+	</div>
+	<div class="page" id="copydata">
+		<div class="header">
+			<h2>Spotify playlist generated</h2>
+		</div>
+		<div class="content">
+			<textarea></textarea>
+			<div id="clip_container">
+				<div id="clip_button">Copy playlist to clipboard</div>
 			</div>
+			<p class="copy_success">Playlist successfully copied</p>
 		</div>
 	</div>
 	<div id="permafooter">
 		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
 	</div>
-<form id="save-csv" name="export" action="save-csv.php" method="post">
-	<input type="hidden" value="" name="csv">
-</form>
+	<form id="save-csv" name="export" action="save-csv.php" method="post">
+		<input type="hidden" value="" name="csv">
+	</form>
 
-<script src="js/libs/jquery-1.7.1.min.js"></script>
-<script src="js/script.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/libs/jquery-1.8.3.min.js"><\/script>')</script>
+	<script src="js/script.min.js"></script>
 </body>
 </html>

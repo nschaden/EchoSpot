@@ -12,21 +12,16 @@
 	<meta name="author" content="Nick Schaden">
 
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="viewport" content="width=device-width">
 
-	<link rel="icon" href="favicon.ico" />
-	<link rel="shortcut icon" href="favicon.ico" />
-	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png" />
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png" />
-	<link rel="stylesheet" href="css/jquery.mobile-1.0.1.css">
-	<link rel="stylesheet" href="css/style.css">
-
-	<script src="js/libs/modernizr.h5bp.custom.js"></script>
-	<script src="js/libs/jquery-1.7.1.min.js"></script>
-	<script src="js/jquerymobile-custom.js"></script>
-	<script src="js/libs/jquery.mobile-1.0.1.min.js"></script>
+	<link rel="icon" href="favicon.ico">
+	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-72x72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114.png">
+	<link rel="stylesheet" href="css/style.min.css">
+	<script src="js/libs/modernizr.custom.min.js"></script>
 </head>
 <body id="help">
 	<div id="permaheader">
@@ -41,11 +36,10 @@
 				<li><a class="song" href="#">Find Songs</a></li>
 				<li><a class="top" href="#">Top Artists</a></li>
 				<li><a class="help active" href="#">Help</a></li>
-				<li class="csv_container"><a class="csv" href="#">Download CSV</a></li>
 			</ul>
 		</nav>
 	</div>
-	<div class="page textonly" data-role="page" id="search">
+	<div class="page textonly" id="search">
 		<h2>Contents</h2>
 		<ul>
 			<li><a href="#intro">Introduction</a></li>
@@ -54,19 +48,15 @@
 			<li><a href="#artist">Finding artists</a></li>
 			<li><a href="#song">Finding songs</a></li>
 			<li><a href="#top">Top artists</a></li>
-			<li><a href="#download">Download a CSV</a></li>
 			<li><a href="#export">Export playlists to Spotify</a></li>
+			<li><a href="#download">Download a CSV</a></li>
 		</ul>
 
 		<h3 id="intro">Introduction</h3>
 
-		<p>EchoSpot is a little web application that harnesses the power of the Echonest API to help you find new cool artists, playlists and songs. 
-			Technically the app can be used on its own for casual browsing, but its real power comes when hooked back into Spotify. Any artist or song
-			has a simple link that auto links back to the Spotify app. Also, when combined with csv parser tools, you can import playlists generated here
-			back into Spotify as well.</p>
+		<p>EchoSpot is a little web application that harnesses the power of the Echonest API to help you find new cool artists, playlists and songs. Technically the app can be used on its own for casual browsing, but its real power comes when hooked back into Spotify. Copy generated playlists to your clipboard with two clicks and import then directly into the desktop Spotify client. In addition, all listed artists and songs have a simple link back to the Spotify app.</p>
 
-		<p>EchoSpot has full mobile integration for on the go as well. Just open this site on a mobile device for a completely different, jQuery Mobile
-			based experience. Clicks on spotify links here auto link into the Spotify mobile app.</p>
+		<p>EchoSpot has full mobile integration for on the go as well. Just open this site on a mobile device; the site layout is responsive. Clicks on spotify links here auto link into the Spotify mobile app. Note with touch there are a few small functional changes: taps on artist rows are treated the same as mouse hovers (more Spotify and Echonest related information is revealed). Taps on song rows auto open the song in Spotify.</p>
 
 		<h3 id="desc">Song and Artist Details</h3>
 
@@ -122,32 +112,32 @@
 		<h3 id="top">Top artists</h3>
 
 		<p>At any time to get a quick reference of the top 40 hottest, buzzworthy artists according to Echonest, just click on Top artists at the top
-			nav for the desktop version, at the bottom for the mobile version.</p>
+			nav.</p>
+			
+			
+		<h3 id="export">Export playlists to Spotify</h3>
+
+		<p>It's really easy to export a playlist of data into Spotify. A 'Playlist' option appears in the navigation after generating any playlist; just click on it. You'll be taken to a screen with a big text area of spotify links and a copy to clipboard button. If you're running Flash, one click on the button will copy the Spotify playlist to your clipboard. If you're not running Flash, select all the contents in the text area and manually copy. With the Spotify playlist contents in your clipboard, just switch to the desktop Spotify client, select or create any playlist and directly paste (Edit > Paste or Cmd+V) the tracks in.</p>
 
 		<h3 id="download">Download a CSV</h3>
 
-		<p>After running any search, an additional 'Download CSV' option should appear. In desktop mode, this appears as a reference to the right
-			of Help in the navigation. In mobile mode, this is represented in the top right as the 'csv' button. In desktop mode, you'll automatically
-			download a csv file of the current results on screen. In mobile mode, a dialog will appear where you can easily select all and copy the 
-			information elsewhere.</p>
+		<p>After generating any playlist, an additional 'CSV' option should appear. This appears as a reference to the right
+			of Help in the navigation. If you've got a device that can support it you'll automatically download a csv file of the current results on screen.</p>
+			
 
-		<h3 id="export">Export playlists to Spotify</h3>
-
-		<p>After downloading a CSV of songs, it's pretty easy to import those tracks into Spotify back in the form of a playlist. Running a quick Google
-			search will reveal other web sites, but I prefer <a href="http://www.ivyishere.org/">Ivy</a>. On Ivy, select 'import your playlist now' on
-			the home screen. Choose the default option of importing a playist file; click on the 'browse' button and upload your csv file. For step
-			two, select the correct song and artist columns, and follow the remaining instructions. As long as your Flash is current, a one click copy
-			should copy to your clipboard a format that's easy to paste back into Spotify.</p>
 
 
 	</div>
 	<div id="permafooter">
 		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
 	</div>
-<script src="js/plugins.js"></script>
-<script src="js/script.js"></script>
-<form id="save-csv" name="export" action="save-csv.php" method="post">
-	<input type="hidden" value="" name="csv">
-</form>
+	<form id="save-csv" name="export" action="save-csv.php" method="post">
+		<input type="hidden" value="" name="csv">
+	</form>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/libs/jquery-1.8.3.min.js"><\/script>')</script>
+	<script src="js/script.min.js"></script>
+</body>
 </body>
 </html>

@@ -1,24 +1,47 @@
+// Simple Set Clipboard System
+// Author: Joseph Huckaby
+window.ZeroClipboard={version:"1.0.8",clients:{},moviePath:"ZeroClipboard.swf",nextId:1,$:function(a){return typeof a=="string"&&(a=document.getElementById(a)),a.addClass||(a.hide=function(){this.style.display="none"},a.show=function(){this.style.display=""},a.addClass=function(a){this.removeClass(a),this.className+=" "+a},a.removeClass=function(a){var b=this.className.split(/\s+/),c=-1;for(var d=0;d<b.length;d++)b[d]==a&&(c=d,d=b.length);return c>-1&&(b.splice(c,1),this.className=b.join(" ")),this},a.hasClass=function(a){return!!this.className.match(new RegExp("\\s*"+a+"\\s*"))}),a},setMoviePath:function(a){this.moviePath=a},newClient:function(){return new ZeroClipboard.Client},dispatch:function(a,b,c){var d=this.clients[a];d&&d.receiveEvent(b,c)},register:function(a,b){this.clients[a]=b},getDOMObjectPosition:function(a,b){var c={left:0,top:0,width:a.width?a.width:a.offsetWidth,height:a.height?a.height:a.offsetHeight};while(a&&a!=b)c.left+=a.offsetLeft,c.left+=a.style.borderLeftWidth?parseInt(a.style.borderLeftWidth):0,c.top+=a.offsetTop,c.top+=a.style.borderTopWidth?parseInt(a.style.borderTopWidth):0,a=a.offsetParent;return c},Client:function(a){this.handlers={},this.id=ZeroClipboard.nextId++,this.movieId="ZeroClipboardMovie_"+this.id,ZeroClipboard.register(this.id,this),a&&this.glue(a)}},ZeroClipboard.Client.prototype={id:0,title:"",ready:!1,movie:null,clipText:"",handCursorEnabled:!0,cssEffects:!0,handlers:null,zIndex:99,glue:function(a,b,c){this.domElement=ZeroClipboard.$(a),this.domElement.style.zIndex&&(this.zIndex=parseInt(this.domElement.style.zIndex,10)+1),this.domElement.getAttribute("title")!=null&&(this.title=this.domElement.getAttribute("title")),typeof b=="string"?b=ZeroClipboard.$(b):typeof b=="undefined"&&(b=document.getElementsByTagName("body")[0]);var d=ZeroClipboard.getDOMObjectPosition(this.domElement,b);this.div=document.createElement("div");var e=this.div.style;e.position="absolute",e.left=""+d.left+"px",e.top=""+d.top+"px",e.width=""+d.width+"px",e.height=""+d.height+"px",e.zIndex=this.zIndex;if(typeof c=="object")for(var f in c)e[f]=c[f];b.appendChild(this.div),this.div.innerHTML=this.getHTML(d.width,d.height)},getHTML:function(a,b){var c="",d="id="+this.id+"&width="+a+"&height="+b,e=this.title?' title="'+this.title+'"':"";if(navigator.userAgent.match(/MSIE/)){var f=location.href.match(/^https/i)?"https://":"http://";c+="<object"+e+' classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="'+f+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="'+a+'" height="'+b+'" id="'+this.movieId+'"><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="false" /><param name="movie" value="'+ZeroClipboard.moviePath+'" /><param name="loop" value="false" /><param name="menu" value="false" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /><param name="flashvars" value="'+d+'"/><param name="wmode" value="transparent"/></object>'}else c+="<embed"+e+' id="'+this.movieId+'" src="'+ZeroClipboard.moviePath+'" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="'+a+'" height="'+b+'" name="'+this.movieId+'" allowScriptAccess="always" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="'+d+'" wmode="transparent" />';return c},hide:function(){this.div&&(this.div.style.left="-2000px")},show:function(){this.reposition()},destroy:function(){if(this.domElement&&this.div){this.hide(),this.div.innerHTML="";var a=document.getElementsByTagName("body")[0];try{a.removeChild(this.div)}catch(b){}this.domElement=null,this.div=null}},reposition:function(a){a&&(this.domElement=ZeroClipboard.$(a),this.domElement||this.hide());if(this.domElement&&this.div){var b=ZeroClipboard.getDOMObjectPosition(this.domElement),c=this.div.style;c.left=""+b.left+"px",c.top=""+b.top+"px"}},setText:function(a){this.clipText=a,this.ready&&this.movie.setText(a)},setTitle:function(a){this.title=a},addEventListener:function(a,b){a=a.toString().toLowerCase().replace(/^on/,""),this.handlers[a]||(this.handlers[a]=[]),this.handlers[a].push(b)},setHandCursor:function(a){this.handCursorEnabled=a,this.ready&&this.movie.setHandCursor(a)},setCSSEffects:function(a){this.cssEffects=!!a},receiveEvent:function(a,b){a=a.toString().toLowerCase().replace(/^on/,"");switch(a){case"load":this.movie=document.getElementById(this.movieId);if(!this.movie){var c=this;setTimeout(function(){c.receiveEvent("load",null)},1);return}if(!this.ready&&navigator.userAgent.match(/Firefox/)&&navigator.userAgent.match(/Windows/)){var c=this;setTimeout(function(){c.receiveEvent("load",null)},100),this.ready=!0;return}this.ready=!0,this.movie.setText(this.clipText),this.movie.setHandCursor(this.handCursorEnabled);break;case"mouseover":this.domElement&&this.cssEffects&&(this.domElement.addClass("hover"),this.recoverActive&&this.domElement.addClass("active"));break;case"mouseout":this.domElement&&this.cssEffects&&(this.recoverActive=!1,this.domElement.hasClass("active")&&(this.domElement.removeClass("active"),this.recoverActive=!0),this.domElement.removeClass("hover"));break;case"mousedown":this.domElement&&this.cssEffects&&this.domElement.addClass("active");break;case"mouseup":this.domElement&&this.cssEffects&&(this.domElement.removeClass("active"),this.recoverActive=!1)}if(this.handlers[a])for(var d=0,e=this.handlers[a].length;d<e;d++){var f=this.handlers[a][d];typeof f=="function"?f(this,b):typeof f=="object"&&f.length==2?f[0][f[1]](this,b):typeof f=="string"&&window[f](this,b)}}},typeof module!="undefined"&&(module.exports=ZeroClipboard);
+
 /* Author:
   nschaden
 */
 UserAgent = {};
-UserAgent.desktop = true;
-UserAgent.init = 'ready';
-UserAgent.pageinit = 'ready';
 UserAgent.searchPage = null;
 UserAgent.searchResultsPage = null;
 UserAgent.stylesPage = null;
 UserAgent.moodsPage = null;
 UserAgent.topPage = null;
 UserAgent.manualHistory = ['#search'];
+UserAgent.miniWidth = null;
 UserAgent.changePage = function(newpage)
 {
-  $('div.page,#permafooter').not(newpage).fadeOut(400,function()
-  {
-    $(newpage).hide().fadeIn(400,function() { if (newpage != '#search_results') $('#permafooter').show(); });
+  var fadeoutelements = $('div.page,#permafooter').not(newpage);
+  fadeoutelements.not(':eq(0)').fadeOut(200);
+  fadeoutelements.first().fadeOut(200, function() {
+    $(newpage).hide().fadeIn(200,function() 
+    { 
+      if (newpage != '#search_results') $('#permafooter').show(); 
+      if (newpage == '#copydata')
+      {
+        if (!Output.clipboard)
+        {
+          // init zero clipboard
+          ZeroClipboard.setMoviePath('http://www.nickschaden.com/echospot/swf/ZeroClipboard.swf');
+          Output.clipboard = new ZeroClipboard.Client();
+          Output.clipboard.glue('clip_button', 'clip_container');
+          Output.clipboard.addEventListener('onComplete',function() {
+            $('.copy_success').addClass('active');
+            setTimeout(function() { $('.copy_success').removeClass('active');},4000);
+          });
+          Output.clipboard.setText(Output.contentSongLinkRows.join('\n'));
+        }
+        else
+           Output.clipboard.setText(Output.contentSongLinkRows.join('\n'));
+      }
+    });
   });
-  if (newpage != '#search_results')
-    $('#permaheader nav li.csv_container').hide();
+  if (newpage != '#search_results' && newpage != '#copydata')
+    $('#permaheader').find('.csv_container,.spot_container').removeClass('active');
   if (newpage == '#search')
   {
     $('#permaheader nav a.top').removeClass('active');          
@@ -34,7 +57,6 @@ UserAgent.changePage = function(newpage)
     $('#permaheader nav a').removeClass('active');
     $('#permaheader nav a.top').addClass('active');
   }
-    
   if (Modernizr.history)
   {
     history.pushState({page:newpage},null,'');
@@ -44,7 +66,6 @@ UserAgent.changePage = function(newpage)
 if (Modernizr.history)
 {
   // initial push on page load is always the search page
-  // history.pushState({page:'#search'})
   window.onpopstate = function (event) 
   {
     // see what is available in the event object
@@ -58,6 +79,7 @@ if (Modernizr.history)
 }
 
 $(function() {
+  UserAgent.miniWidth = ($(window).width() <= 480);
   // for hash tags that don't fall in the proper starting area, change and reload
   var splithref = document.location.href.split('#');
   if (splithref.length > 1 && splithref[1] != 'top' && splithref[1] != 'search')
@@ -69,7 +91,12 @@ $(function() {
   {
     $this = $(this);
     if ($this.hasClass('active')) return false;
-    if ($this.hasClass('csv'))
+    if ($this.hasClass('playlist_generate'))
+    {
+      $('#copydata').find('textarea').val(Output.contentSongLinkRows.join('\n'));
+      UserAgent.changePage('#copydata');
+    }
+    else if ($this.hasClass('csv'))
     {
       var data = Output.plainTextContentRows.join('\n');
       $('#save-csv input').val(data);
@@ -107,13 +134,13 @@ $(function() {
         UserAgent.changePage('#top');
       }
       else
-        $('#top:visible').fadeOut(400); 
+        $('#top:visible').fadeOut(200); 
     }
     return false;
   });
-});
-$(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
-{
+  
+  if ($('#help').length) return;
+  // init top artists
   EchoCheck.fetchTopTerms(false,function(res)
   {
     Output.setOutputToPage($('#styles'));
@@ -121,7 +148,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
     // move results to form
     EventHandler.addsearchCheckboxFunctionality('styles');
     $('#styles .content fieldset').addClass('checkbox_container').insertAfter($('#styles_container'));
-    $('#search-styles').on('click',function() { $('#styles_container').next().toggle(400); return false; });      
+    $('#search-styles').on('click',function() { $('#styles_container').next().toggle(200); return false; });      
 
     EchoCheck.fetchTopTerms(true,function(res)
     {
@@ -130,10 +157,11 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
       // move results to form
       EventHandler.addsearchCheckboxFunctionality('moods');
       $('#moods .content fieldset').addClass('checkbox_container').insertAfter($('#moods_container'));
-      $('#search-moods').on('click',function() { $('#moods_container').next().toggle(400); return false; });
+      $('#search-moods').on('click',function() { $('#moods_container').next().toggle(200); return false; });
     });
   });
 
+  // init search terms
   $('#search').find('#search-byartist,#search-bysong').on('click',function()
   {
     $('#search').find('.playlistonly').addClass('inactive');
@@ -426,7 +454,7 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
     EchoCheck.powerSearch(mode,options,function(res)
     {
       $('#search_results').removeClass('loading');
-      $('#permaheader nav li.csv_container').show();
+      $('#permaheader').find('.csv_container,.spot_container').addClass('active');
       if (mode == 'artist')
       {
         Output.addArtistsToPage(res.artists,$('#search-sortby').val());
@@ -488,32 +516,14 @@ $(document).on(UserAgent.pageinit + '.search',UserAgent.searchPage,function()
       $('#permaheader a.artist').addClass('active');
     }
   }
+  
 
-  $(document).unbind(UserAgent.pageinit + '.search');
-});
-$(document).on(UserAgent.pageinit + '.searchresults',UserAgent.searchResultsPage,function()
-{
-  $('#plaintext_link').on('click',function()
-  {
-    if (typeof Output == 'object')
-    {
-      $('#plaintext textarea').html(Output.plainTextContentRows.join('\n'));
-    }
-  });
-  $(document).unbind(UserAgent.pageinit + '.searchresults');  
-});
-$(document).on(UserAgent.pageinit + '.styles',UserAgent.stylesPage,function()
-{
+  // add styles functionality
   EventHandler.addsearchCheckboxFunctionality('styles');
-  $(document).unbind(UserAgent.pageinit + '.styles');
-});
-$(document).on(UserAgent.pageinit + '.moods',UserAgent.moodsPage,function()
-{
+  
+  // add moods functionality
   EventHandler.addsearchCheckboxFunctionality('moods');
-  $(document).unbind('UserAgent.pageinit.moods');
-});
-$(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
-{
+
   Output.setOutputToPage($('#top'));
   // have extra JQuery based animation for collapsible menus, add on demand terms and related items
   EventHandler.addArtistMenusFunctionality(Output.content);
@@ -525,7 +535,6 @@ $(document).on(UserAgent.pageinit + '.top',UserAgent.topPage,function()
     Output.addArtistsToPage(res.artists);
     Output.content.trigger('create');
   });
-  $(document).unbind(UserAgent.pageinit + '.top');
 });
 
 EchoCheck = {
@@ -782,21 +791,22 @@ EchoCheck = {
 
 Output = {
   artistDetail: {},
+  clipboard: null,
   colorSpectrumLength: 10,
   colorSpectrumIndex: 0,
   content: null,
   contentId: '',
   contentRows: [],
-  footerContent: '<div class="footer" data-id="footer" data-position="fixed" data-role="footer"><div data-role="navbar" data-iconpos="top"><ul>' +
-          '<li><a class="search" href="#search" data-icon="search" data-transition="none">Search</a></li>' +
-          '<li><a class="top" href="#top" data-icon="star" data-transition="none">Top</a></li>' +
-          '</ul></div></div>',
+  contentSongLinkRows: [],
+  footerContent: '<div class="footer"><div><ul>' +
+          '<li><a class="search" href="#search">Search</a></li>' +
+          '<li><a class="top" href="#top">Top</a></li>' +
+          '</ul></div></div>',   
   plainTextContentRows: [],
   songDetail: {},
   addRow: function(text)
   {
-    var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-    this.content.append('<div class="color-blue-' + currcolor + '" data-role="collapsible"><h3>' + text + '</h3></div>').trigger('create');
+    this.content.append('<div><h3>' + text + '</h3></div>').trigger('create');
     this.colorSpectrumLengthIndex++;
   },
   // takes currently cached rows of content (artists or songs), dumps all into content area at once
@@ -853,8 +863,8 @@ Output = {
   {
     if (typeof id != 'string' || typeof headertext != 'string') return;
     id = id.replace(/\s+/g,'_');
-    var emptypagetext = '<div class="page" data-role="page" id="' + id + '" class="' + newclass + '"><div class="header" data-role="header"><h1>' + headertext + 
-              '</h1></div><div data-role="content"></div>' + this.footerContent + ' </div>';
+    var emptypagetext = '<div class="page" id="' + id + '" class="' + newclass + '"><div class="header"><h2>' + headertext + 
+              '</h2></div><div class="content"></div>';
     $('#permafooter').before(emptypagetext);
   },
   addSongsToPage: function(songs,sortmethod,limits)
@@ -882,7 +892,19 @@ Output = {
     }
     if (typeof sortmethod == 'string' && sortmethod != 'random')
       Output.sortOutput(sortmethod,true);
-    Output.addContentRows();  
+    Output.addContentRows();
+    if (UserAgent.miniWidth)
+    {
+      $('#search_results').click(function(e) {
+        e.preventDefault();
+        if (e.target.tagName == 'H3')
+        {
+          var spotifylink = $(e.target).siblings('ul').find('a');         
+          if (spotifylink.length)
+            document.location.href = spotifylink.attr('href');
+        }
+      });
+    }  
   },
   // note artist position is zero indexed
   addSpotifyLinkToArtistRow: function(link,artistpos)
@@ -891,7 +913,7 @@ Output = {
     if (!artistrow.length) return;
     var list;
     list = artistrow.find('ul');
-    list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
+    list.prepend('<li><a href="' + link + '>Spotify Link</a></li>').trigger('create');
   },
   addSpotifyLinkToSongRow: function(link,songpos)
   {
@@ -899,7 +921,7 @@ Output = {
     if (!songrow.length) return;
     var list;
     list = songrow.find('ul');
-    list.prepend('<li><a href="' + link + '" data-role="button">Spotify Link</a></li>').trigger('create');
+    list.prepend('<li><a href="' + link + '>Spotify Link</a></li>').trigger('create');
   },
   clearCheckboxesPage: function(pageid)
   {
@@ -911,8 +933,7 @@ Output = {
   {
     var artistrowtext;
     // header
-    var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
-    artistrowtext = '<div class="color-blue-' + currcolor + ' artistrow" data-role="collapsible"><h3>' + name + '</h3>';
+    artistrowtext = '<div class="artistrow"><h3>' + name + '</h3>';
     this.colorSpectrumIndex++;
     // row details
     if (typeof hotness == 'undefined')
@@ -921,13 +942,16 @@ Output = {
     }
     else
     {
-      artistrowtext += '<ul data-role="listview">';
-      artistrowtext += '<li><a href="' + spotifylink + '" data-role="button">Spotify Link</a></li><li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
+      artistrowtext += '<ul>';
+      if (UserAgent.miniWidth)
+        artistrowtext += '<li><a href="' + spotifylink + '">Spotify Link</a></li><li>H: ' + Math.round(hotness*100) + '%</li><li>F: ' + Math.round(familiarity*100) + '%</li>';
+      else
+        artistrowtext += '<li><a href="' + spotifylink + '">Spotify Link</a></li><li>Hotness: ' + Math.round(hotness*100) + '%</li><li>Familiarity: ' + Math.round(familiarity*100) + '%</li>';
       this.artistDetail[name].terms = terms;
       artistrowtext += '</ul></div>';
     }
     this.contentRows.push(artistrowtext);
-    this.plainTextContentRows.push(name);
+    this.plainTextContentRows.push('"' + name + '"');
   },
   saveSongRow: function(title,artistname,songhotness,artisthotness,artistfamiliarity,danceability,energy,tempo,spotifylink)
   {
@@ -935,9 +959,9 @@ Output = {
     // header
     var currcolor = Math.floor(this.colorSpectrumIndex / this.colorSpectrumLength) % 2 ? (this.colorSpectrumIndex % this.colorSpectrumLength) : this.colorSpectrumLength - (this.colorSpectrumIndex % this.colorSpectrumLength);
     if (typeof artistname == 'undefined')
-      songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + '</h3>';
+      songrowtext = '<div class="songrow"><h3>' + title + '</h3>';
     else
-      songrowtext = '<div class="color-blue-' + currcolor + ' songrow" data-role="collapsible"><h3>' + title + ' - ' + artistname + '</h3>';
+      songrowtext = '<div class="songrow"><h3>' + title + ' - ' + artistname + '</h3>';
     this.colorSpectrumIndex++;
     // row details
     if (typeof artistname == 'undefined')
@@ -946,35 +970,38 @@ Output = {
     }
     else
     {
-      songrowtext += '<ul data-role="listview">';
-      songrowtext += '<li><a href="' + spotifylink + '" data-role="button">Spotify Link</a></li>';
+      songrowtext += '<ul>';
+      songrowtext += '<li><a href="' + spotifylink + '">Spotify Link</a></li>';
       songrowtext += '<li>SH: ' + Math.round(songhotness*100) + '%</li><li>AH: ' + Math.round(artisthotness*100) + '%</li>';
       songrowtext += '<li>AF: ' + Math.round(artistfamiliarity*100) + '%</li><li>D: ' + Math.round(danceability*100) + '%</li>';
-      songrowtext += '<li>E: ' + Math.round(energy*100) + '%</li><li class="last">T: ' + tempo + '</li>';
+      if (!UserAgent.miniWidth)
+        songrowtext += '<li>E: ' + Math.round(energy*100) + '%</li><li class="last">T: ' + tempo + '</li>';
       songrowtext += '</ul></div>';
     }
     this.contentRows.push(songrowtext);
-    this.plainTextContentRows.push(title + ',' + artistname);
+    this.plainTextContentRows.push('"' + title + '","' + artistname + '"');
+    this.contentSongLinkRows.push(spotifylink);
   },
   // changes all focus of the output factory to this new page object element
   setOutputToPage: function(page)
   {
     if (typeof page != 'object') return;
-    var newcontent = $(page).find('div[data-role=content]');
+    var newcontent = $(page).find('.content');
     if (!newcontent.length) return;
     this.contentId = page.attr('id');
     this.contentRows = [];
+    this.contentSongLinkRows = [];
     if (page.attr('id') == 'search_results')
     {
       if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') == 'artist')
-        this.plainTextContentRows = ['Artist'];
+        this.plainTextContentRows = ['"Artist"'];
       else if (Modernizr.sessionstorage && sessionStorage.getItem('startsearchsetting') == 'song')
-        this.plainTextContentRows = ['Song'];
+        this.plainTextContentRows = ['"Song"'];
       else
-        this.plainTextContentRows = ['Song,Artist'];
+        this.plainTextContentRows = ['"Song","Artist"'];
     }
     else
-      this.plainTextContentRows = ['Artist'];
+      this.plainTextContentRows = ['"Artist"'];
     this.content = newcontent;
     this.colorSpectrumIndex = 0;
   },
@@ -1026,21 +1053,24 @@ Output = {
     // recut plain text
     songmode = (Output.contentRows[0].match(/<h3>(.*)<\/h3>/)[1].indexOf('-') > -1);
     if (songmode)   
-      Output.plainTextContentRows = ['Track,Artist'];
+      Output.plainTextContentRows = ['Artist,Song'];
     else
       Output.plainTextContentRows = ['Artist'];
+    Output.contentSongLinkRows = [];
     for (i = 0; i < Output.contentRows.length; i++)
     {
       var name = Output.contentRows[i].match(/<h3>(.*)<\/h3>/)[1];
       if (songmode)
       {
-        var track = $.trim(name.match(/(.*)-/)[1]);
+        var link = Output.contentRows[i].match(/<a href="(.*)">Spotify/)[1];
+        var track = $.trim(name.match(/-(.*)/)[1]);
         var artist = $.trim(name.match(/-(.*)/)[1]);
-        Output.plainTextContentRows.push(track + ',' + artist);
+        Output.plainTextContentRows.push('"' + track + '","' + artist + '"');
+        Output.contentSongLinkRows.push(link);
       }
       else
       {
-        Output.plainTextContentRows.push(name);
+        Output.plainTextContentRows.push('"' + name + '"');
       }
     }
   }
@@ -1072,7 +1102,7 @@ EventHandler = {
             var listview;
             listview = content.find('ul');
             var listviewcontents = listview.html();
-            var newlisttext = '<ul data-role="listview">' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
+            var newlisttext = '<ul>' + listviewcontents + '<li><a class="terms_link" href="#">Terms</a></li>';
             newlisttext += '<li class="last"><a class="related_link" href="#">Related artists</a></li></ul>';
             listview.replaceWith(newlisttext);
             content.trigger('create');  
@@ -1085,19 +1115,9 @@ EventHandler = {
             var termspageid = lookupname.replace(/\s+/g,'') + '_terms';
             if (!$('#' + termspageid).length)
             {
-              $(document).on('pageinit.temppage','#' + termspageid,function()
-              {
-                UserAgent.changePage('#' + termspageid);
-                // add event handlers for terms
-                $('#' + termspageid).on('click','li',function()
-                {
-                  $('#search-terms').val(jQuery.trim($(this).text()));
-                });
-                $(document).unbind('pageinit.temppage');
-              });
               Output.addNewPage(termspageid,lookupname + ' terms','terms');
               Output.setOutputToPage($('#' + termspageid));
-              var termstext = '<ul data-role="listview">';
+              var termstext = '<ul>';
               for (var i = 0; i < detail.terms.length; i++)
               {
                 termstext += '<li class="termsrow"><a href="#search">' + detail.terms[i] + '</a></li>';
@@ -1125,19 +1145,18 @@ EventHandler = {
             var relatedartistpageid = lookupname.replace(/\s+/g,'') + '_related';
             if (!$('#' + relatedartistpageid).length)
             {
-              $(document).on('pageinit.temppage','#' + relatedartistpageid,function()
-              {
-                UserAgent.changePage('#' + relatedartistpageid);
-                $(document).unbind('pageinit.temppage');
-              });
               Output.addNewPage(relatedartistpageid,lookupname + ' related artists','related');
               Output.setOutputToPage($('#' + relatedartistpageid));
               EventHandler.addArtistMenusFunctionality(Output.content);
+              UserAgent.changePage('#' + relatedartistpageid);
+              $('#' + relatedartistpageid).addClass('loading');
+              $('#permafooter').css('visibility','hidden');
               EchoCheck.findRelatedArtists(detail.echoid,false,function(res)
               {
                 Output.addArtistsToPage(res.artists);
+                $('#permafooter').css('visibility','visible');
+                $('#' + relatedartistpageid).removeClass('loading');
               });
-              UserAgent.changePage('#' + relatedartistpageid);
               return false;
             }
             else
