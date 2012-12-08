@@ -42,12 +42,12 @@
 		</nav>
 	</div>
 	<div class="page"  id="search">
-		<div class="header" >
+		<div class="header">
 			<h2>Power Search</h2>
 		</div>
-		<div class="content" >
-			<div class="fieldcontain" >
-				<fieldset class="searchbyarea" >
+		<div class="content">
+			<div class="fieldcontain">
+				<fieldset class="searchbyarea">
 					<legend></legend>
          	<label>Playlist</label>
 					<input type="radio" name="search-by" id="search-byplaylist" value="byplaylist" checked="checked">
@@ -57,41 +57,12 @@
          	<input type="radio" name="search-by" id="search-bysong" value="bysong">
 				</fieldset>
 			</div>
-			<div class="fieldcontain" >
-				<label for="search-artist">Artist name</label>
-				<input type="text" name="artist" id="search-artist" value="">
+			<div class="fieldcontain">
+				<label for="search-primary">Artist name</label>
+				<input type="text" name="primary" id="search-primary" value="">
 			</div>
-			<div id="styles_container" class="fieldcontain" >
-			 	<label>Styles</label>
-			 	<div class="button_container">
-					<a href="#styles" id="search-styles">-</a>
-				</div>
-			</div>
-			<div id="moods_container" class="fieldcontain" >
-				<label>Moods</label>
-				<div class="button_container">
-					<a data-icon="arrow-r" data-iconpos="right"  href="#moods" id="search-moods">-</a>
-				</div>
-			</div>
-			<div class="fieldcontain" >
-				<fieldset class="daterange_container"  >
-					<legend>Date Range</legend>
-					<select name="startyear" id="search-startyear">
-					   <option>Start Year</option>
-					   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
-					</select>
-					<select name="endyear" id="search-endyear">
-					   <option>End Year</option>
-					   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
-					</select>
-				</fieldset>
-			</div>
-			<div class="fieldcontain" >
-				<label for="search-terms">Descriptive terms</label>
-				<input type="text" name="terms" id="search-terms" value=""  />
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-playlisttype">Playlist Type</label>
+			<div class="fieldcontain playlistonly">
+				<label for="search-playlisttype">Playlist type</label>
 				<select name="energy" id="search-playlisttype">
 				   <option value="artistradio">Artist Radio</option>
 				   <option value="artistdescription">Artist Description</option>
@@ -99,163 +70,147 @@
 				   <option value="songradio">Song Radio</option>
 				</select>
 			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-variety">Artist variety</label>
-				<select name="variety" id="search-variety">
-				   <option value="very high">Very high</option>
-				   <option value="high">High</option>
-				   <option value="average" selected="selected">Average</option>
-				   <option value="low">Low</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-distribution">Artist distribution</label>
-				<select name="variety" id="search-distribution">
-				   <option value="focused">Focused</option>
-				   <option value="wandering">Wandering</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-mintempo">Minimum song tempo (bpm)</label>
-				<input type="text" name="mintempo" id="search-mintempo" value=""  />
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-maxtempo">Maximum song tempo (bpm)</label>
-				<input type="text" name="maxtempo" id="search-maxtempo" value=""  />
-			</div>
-			<div class="fieldcontain" >
-				<label for="search-hotness">Artist hotness</label>
-				<select name="hotness" id="search-hotness">
-				   <option>-</option>
-				   <option value="high">High</option>
-				   <option value="highaverage">High + Average</option>
-				   <option value="average">Average</option>
-				   <option value="lowaverage">Low + Average</option>
-				   <option value="low">Low</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-songhotness">Song hotness</label>
-				<select name="variety" id="search-songhotness">
-				   <option>-</option>
-				   <option value="high">High</option>
-				   <option value="highaverage">High + Average</option>
-				   <option value="average">Average</option>
-				   <option value="lowaverage">Low + Average</option>
-				   <option value="low">Low</option>
-				</select>
-			</div>
-			<div class="fieldcontain" >
-				<label for="search-familiarity">Artist familiarity</label>
-				<select name="familiarity" id="search-familiarity">
-				   <option>-</option>
-				   <option value="wellknown">Well Known</option>
-				   <option value="wellknownaverage">Well Known + Average</option>
-				   <option value="average">Average</option>
-				   <option value="obscureaverage">Obscure + Average</option>
-				   <option value="obscure">Obscure</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-energy">Song energy</label>
-				<select name="energy" id="search-energy">
-				   <option>-</option>
-				   <option value="high">High</option>
-				   <option value="highaverage">High + Average</option>
-				   <option value="average">Average</option>
-				   <option value="lowaverage">Low + Average</option>
-				   <option value="low">Low</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-danceability">Song danceability</label>
-				<select name="danceability" id="search-danceability">
-				   <option>-</option>
-				   <option value="high">High</option>
-				   <option value="highaverage">High + Average</option>
-				   <option value="average">Average</option>
-				   <option value="lowaverage">Low + Average</option>
-				   <option value="low">Low</option>
-				</select>
-			</div>
-			<div class="fieldcontain" >
-				<label for="search-results">Results</label>
-				<select name="results" id="search-results">
-				   <option value="100">100</option>
-				   <option value="50" selected="selected">50</option>
-				   <option value="20">20</option>
-				</select>
-			</div>
-			<div class="fieldcontain hideonplaylist inactive" >
-				<label for="search-sortby">Sort by</label>
-				<select name="sortby" id="search-sortby">
-				   <option value="hotness">Hotness</option>
-				   <option value="familiarity">Familiarity</option>
-				</select>
-			</div>
-			<div class="fieldcontain playlistonly" >
-				<label for="search-sortbyplaylist">Sort by</label>
-				<select name="sortbyplaylist" id="search-sortbyplaylist">
-				   <option value="random">Random</option>
-				   <option value="song_hotttnesss-desc">Song hotness (desc)</option>
-				   <option value="song_hotttnesss-asc">Song hotness (asc)</option>
-				   <option value="artist_hotttnesss-desc">Artist hotness (desc)</option>
-				   <option value="artist_hotttnesss-asc">Artist hotness (asc)</option>
-				   <option value="artist_familiarity-desc">Artist familiarity (desc)</option>
-				   <option value="artist_familiarity-asc">Artist familiarity (asc)</option>
-				   <option value="tempo-desc">Tempo (desc)</option>
-				   <option value="tempo-asc">Tempo (asc)</option>
-				   <option value="danceability-desc">Danceability (desc)</option>
-				   <option value="danceability-asc">Danceability (asc)</option>
-				   <option value="energy-desc">Energy (desc)</option>
-				   <option value="energy-asc">Energy (asc)</option>
-				</select>
-			</div>
-			<div id="reset_container" class="submit_wrapper fieldcontain" >
-				<label></label>
-				<div class="button_container selector">
-					<input class="reset"  type="submit" value="Reset">
-				</div>
-			</div>
 			<div id="submit_container" class="submit_wrapper fieldcontain" >
-				<label></label>
 				<div class="button_container selector">
 					<input class="submit"  type="submit" value="Go">
 				</div>
+				<div class="button_container options_container selector">
+					<input class="options"  type="submit" value="More Options">
+				</div>
+				<div class="button_container reset_container selector">
+					<input class="reset"  type="submit" value="Reset">
+				</div>
 			</div>
 			<div class="clearfix"></div>
+			<div class="advanced-options inactive">
+				<div class="fieldcontain">
+					<fieldset class="daterange_container">
+						<legend>Artist date range</legend>
+						<select name="startyear" id="search-startyear">
+						   <option>Start Year</option>
+						   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
+						</select>
+						<select name="endyear" id="search-endyear">
+						   <option>End Year</option>
+						   <option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option>
+						</select>
+					</fieldset>
+				</div>
+				<div class="fieldcontain hideonplaylist inactive" >
+					<label for="search-terms">Descriptive terms</label>
+					<input type="text" name="terms" id="search-terms" value=""  />
+				</div>
+				<div class="fieldcontain fieldslider playlistonly">
+					<label for="search-variety">Artist variety</label>
+					<input type="text" readonly="readonly" name="variety" id="search-variety" value="Average">	
+					<div id="slider-search-variety"></div>
+				</div>
+				<div class="fieldcontain fieldslider">
+					<label for="search-hotness">Artist hotness</label>
+					<input type="text" readonly="readonly" name="hotness" id="search-hotness" value="Low - Super Hot">	
+					<div id="slider-search-hotness"></div>
+				</div>
+				<div class="fieldcontain fieldslider playlistonly">
+					<label for="search-songhotness">Song hotness</label>
+					<input type="text" readonly="readonly" name="songhotness" id="search-songhotness" value="Low - Super Hot">	
+					<div id="slider-search-songhotness"></div>
+				</div>
+				<div class="fieldcontain fieldslider">
+					<label for="search-familiarity">Artist familiarity</label>
+					<input type="text" readonly="readonly" name="familiarity" id="search-familiarity" value="Obscure - Well Known">	
+					<div id="slider-search-familiarity"></div>
+				</div>
+				<div class="fieldcontain fieldslider">
+					<label for="search-energy">Song energy</label>
+					<input type="text" readonly="readonly" name="energy" id="search-energy" value="Relaxed - High">	
+					<div id="slider-search-energy"></div>
+				</div>
+				<div class="fieldcontain fieldslider">
+					<label for="search-danceability">Song danceability</label>
+					<input type="text" readonly="readonly" name="danceability" id="search-danceability" value="Low - High">	
+					<div id="slider-search-danceability"></div>
+				</div>
+				<div class="fieldcontain playlistonly" >
+					<label for="search-mintempo">Min song tempo (bpm)</label>
+					<input type="text" name="mintempo" id="search-mintempo" value="">
+				</div>
+				<div class="fieldcontain playlistonly" >
+					<label for="search-maxtempo">Max song tempo (bpm)</label>
+					<input type="text" name="maxtempo" id="search-maxtempo" value="">
+				</div>
+				<div class="fieldcontain" >
+					<label for="search-results">Results</label>
+					<select name="results" id="search-results">
+					   <option value="100">100</option>
+					   <option value="50" selected="selected">50</option>
+					   <option value="20">20</option>
+					</select>
+				</div>
+				<div class="fieldcontain hideonplaylist inactive" >
+					<label for="search-sortby">Sort by</label>
+					<select name="sortby" id="search-sortby">
+					   <option value="hotness">Hotness</option>
+					   <option value="familiarity">Familiarity</option>
+					</select>
+				</div>
+				<div class="fieldcontain playlistonly" >
+					<label for="search-sortbyplaylist">Sort by</label>
+					<select name="sortbyplaylist" id="search-sortbyplaylist">
+					   <option value="random">Random</option>
+					   <option value="song_hotttnesss-desc">Song hotness (desc)</option>
+					   <option value="song_hotttnesss-asc">Song hotness (asc)</option>
+					   <option value="artist_hotttnesss-desc">Artist hotness (desc)</option>
+					   <option value="artist_hotttnesss-asc">Artist hotness (asc)</option>
+					   <option value="artist_familiarity-desc">Artist familiarity (desc)</option>
+					   <option value="artist_familiarity-asc">Artist familiarity (asc)</option>
+					   <option value="tempo-desc">Tempo (desc)</option>
+					   <option value="tempo-asc">Tempo (asc)</option>
+					   <option value="danceability-desc">Danceability (desc)</option>
+					   <option value="danceability-asc">Danceability (asc)</option>
+					   <option value="energy-desc">Energy (desc)</option>
+					   <option value="energy-asc">Energy (asc)</option>
+					</select>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="page"  id="search_results">
+		<div id="clip_content">
+			<h2>Spotify playlist generated</h2>
+			<div id="clip_container">
+					<div id="clip_button">Copy playlist to clipboard</div>
+			</div>
+			<p class="copy_success">Playlist successfully copied</p>
+		</div>
 		<div class="content" >
 
 		</div>
 	</div>
 	<div class="page" id="styles">
-		<div class="header" >
+		<div class="header">
 			<h2>Styles</h2>
 		</div>
-		<div class="content" >
+		<div class="content">
 			<fieldset >
 				
 			</fieldset>
 		</div>
 	</div>
 	<div class="page"  id="moods">
-		<div class="header" >
+		<div class="header">
 			<h2>Moods</h2>
 		</div>
-		<div class="content" >
+		<div class="content">
 			<fieldset >
 
 			</fieldset>
 		</div>
 	</div>
 	<div class="page"  id="top">
-		<div class="header" >
+		<div class="header">
 			<h2>Hot Artists</h2>
 		</div>
-		<div class="content" >
+		<div class="content">
 
 		</div>
 	</div>
@@ -265,10 +220,6 @@
 		</div>
 		<div class="content">
 			<textarea></textarea>
-			<div id="clip_container">
-				<div id="clip_button">Copy playlist to clipboard</div>
-			</div>
-			<p class="copy_success">Playlist successfully copied</p>
 		</div>
 	</div>
 	<div id="permafooter">
