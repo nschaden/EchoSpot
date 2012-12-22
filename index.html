@@ -27,7 +27,6 @@
 	<div id="permaheader">
 		<div class="text clearfix">
 			<h1>EchoSpot</h1>
-			<h3>Spotify consumption with the power of EchoNest.</h3>
 		</div>
 		<nav class="clearfix">
 			<ul>
@@ -42,10 +41,8 @@
 		</nav>
 	</div>
 	<div class="page"  id="search">
-		<div class="header">
-			<h2>Power Search</h2>
-		</div>
 		<div class="content">
+			<h2 id="search-header">Generate a Playlist</h2>
 			<div class="fieldcontain">
 				<fieldset class="searchbyarea">
 					<legend></legend>
@@ -57,12 +54,12 @@
          	<input type="radio" name="search-by" id="search-bysong" value="bysong">
 				</fieldset>
 			</div>
-			<div class="fieldcontain">
-				<label for="search-primary">Artist name</label>
+			<div class="fieldcontain" id="primary-fieldcontain" title="Name of artist or artists to search for. Separate with commas.<br>A single artist can be a name description (e.g. 'Daft Punk') or a Spotify artist URI (e.g. 'spotify:artist:xxx')">
+				<label for="search-primary">Artist name(s)/URI(s)</label>
 				<input type="text" name="primary" id="search-primary" value="">
 			</div>
-			<div class="fieldcontain playlistonly">
-				<label for="search-playlisttype">Playlist type</label>
+			<div class="fieldcontain playlistonly" title="<strong>Artist Radio</strong>: Generate songs for the given artists and similar artists.<br><strong>Artist Description</strong>: Generate songs from artists matching the given description.<br><strong>Specific Artists</strong>: Generate songs for the given artists only.<br><strong>Song Radio</strong>: Play longs similar to the song or songs specified." for="search-playlisttype">
+				<label>Playlist type</label>
 				<select name="energy" id="search-playlisttype">
 				   <option value="artistradio">Artist Radio</option>
 				   <option value="artistdescription">Artist Description</option>
@@ -70,21 +67,19 @@
 				   <option value="songradio">Song Radio</option>
 				</select>
 			</div>
-			<div id="submit_container" class="submit_wrapper fieldcontain" >
-				<div class="button_container selector">
-					<input class="submit"  type="submit" value="Go">
-				</div>
-				<div class="button_container options_container selector">
-					<input class="options"  type="submit" value="More Options">
-				</div>
-				<div class="button_container reset_container selector">
-					<input class="reset"  type="submit" value="Reset">
-				</div>
+			<div class="button_container selector">
+				<input class="submit"  type="submit" value="Go">
+			</div>
+			<div class="button_container reset_container selector">
+				<input class="reset"  type="submit" value="Reset">
+			</div>
+			<div class="button_container options_container selector">
+				<input class="options"  type="submit" value="More Options">
 			</div>
 			<div class="clearfix"></div>
-			<div class="advanced-options inactive">
-				<div class="fieldcontain">
-					<fieldset class="daterange_container">
+			<div class="advanced-options clearfix inactive">
+				<div class="fieldcontain daterange_container" title="Add/skew the playlist songs toward artists that exist between the dates given.">
+					<fieldset>
 						<legend>Artist date range</legend>
 						<select name="startyear" id="search-startyear">
 						   <option>Start Year</option>
@@ -96,49 +91,49 @@
 						</select>
 					</fieldset>
 				</div>
-				<div class="fieldcontain hideonplaylist inactive" >
+				<div class="fieldcontain hideonplaylist inactive" title="Descriptive terms to search for, separated by commas (e.g. 80s, cold, funk).">
 					<label for="search-terms">Descriptive terms</label>
 					<input type="text" name="terms" id="search-terms" value=""  />
 				</div>
-				<div class="fieldcontain fieldslider playlistonly">
-					<label for="search-variety">Artist variety</label>
-					<input type="text" readonly="readonly" name="variety" id="search-variety" value="Average">	
+				<div class="fieldcontain fieldslider playlistonly" title="Overall variety of artists in the playlist.<br><strong>Low/Average</strong>: Artist numbers low and tightly connected musically to the seed artist.<br><strong>High/Very High</strong>: Broader, wider range of artists, some of which have a weaker (yet relevant) connection to the artist.">
+					<label  for="search-variety">Artist variety</label>
 					<div id="slider-search-variety"></div>
+					<input type="text" readonly="readonly" name="variety" id="search-variety" value="Average">	
 				</div>
-				<div class="fieldcontain fieldslider">
+				<div class="fieldcontain fieldslider" title="Overall rating of how hot/buzzworthy the artists in the playlist are.<br><strong>Super Hot</strong>: Crazy hot acts, often heavy rotation on top 40 radio.<br><strong>Hot</strong>: Generally well played among mainstream audiences or at least among fans of the music genre.<br><strong>Average</strong>: Less buzz among wider genre fans but far from obscure.<br><strong>Low</strong>: Not talked about.">
 					<label for="search-hotness">Artist hotness</label>
-					<input type="text" readonly="readonly" name="hotness" id="search-hotness" value="Low - Super Hot">	
 					<div id="slider-search-hotness"></div>
+					<input type="text" readonly="readonly" name="hotness" id="search-hotness" value="Low - Super Hot">	
 				</div>
-				<div class="fieldcontain fieldslider playlistonly">
+				<div class="fieldcontain fieldslider playlistonly" title="Overall rating of how hot/buzzworthy the songs in the playlist are.<br><strong>Super Hot</strong>: Well listened hits among mainstream audiences, usually best known songs of select smaller acts that broke into mainstream appeal.<br><strong>Hot</strong>: Well known among fans that already follow that music genre, but not necessarily wider appeal. Top hits from smaller, more obscure artists.<br><strong>Average</strong>: Still known among those that follow the artist, but less so among genre fans.<br><strong>Low</strong>: Often not even known among those that follow the band. Considered more obscure cuts.">
 					<label for="search-songhotness">Song hotness</label>
-					<input type="text" readonly="readonly" name="songhotness" id="search-songhotness" value="Low - Super Hot">	
 					<div id="slider-search-songhotness"></div>
+					<input type="text" readonly="readonly" name="songhotness" id="search-songhotness" value="Low - Super Hot">	
 				</div>
-				<div class="fieldcontain fieldslider">
+				<div class="fieldcontain fieldslider" title="Artist familiarity as measured by genre fans.<br><strong>Well Known</strong>: Fans of music genre have almost surely heard of this artist.<br><strong>Semi-familiar</strong>: Known among bigger fans of the music genre but not well covered otherwise.<br><strong>Obscure</strong>: Fairly unknown, even among big fans of the genre.">
 					<label for="search-familiarity">Artist familiarity</label>
-					<input type="text" readonly="readonly" name="familiarity" id="search-familiarity" value="Obscure - Well Known">	
 					<div id="slider-search-familiarity"></div>
+					<input type="text" readonly="readonly" name="familiarity" id="search-familiarity" value="Obscure - Well Known">	
 				</div>
-				<div class="fieldcontain fieldslider">
+				<div class="fieldcontain fieldslider" title="Whether the playlist songs keep you awake or make you relax. Determined by measuring the variable loudness of different song segments.<br><strong>High</strong>: In your face and punctuated.<br><strong>Average</strong>: Mixed signals; most songs fall in this range.<br><strong>Low</strong>: Laid back.">
 					<label for="search-energy">Song energy</label>
-					<input type="text" readonly="readonly" name="energy" id="search-energy" value="Relaxed - High">	
 					<div id="slider-search-energy"></div>
+					<input type="text" readonly="readonly" name="energy" id="search-energy" value="Relaxed - High">	
 				</div>
-				<div class="fieldcontain fieldslider">
+				<div class="fieldcontain fieldslider" title="A measure of how easily danceable the playlist songs are, measured by consistency in tempo and ease of discerning the main beat. Note slow tempo songs can have high danceability and vice versa.<br><strong>High</strong>: Easily danceable.<br><strong>Average</strong>:Average danceability.<br><strong>Low:</strong>: Not for dancing.">
 					<label for="search-danceability">Song danceability</label>
-					<input type="text" readonly="readonly" name="danceability" id="search-danceability" value="Low - High">	
 					<div id="slider-search-danceability"></div>
+					<input type="text" readonly="readonly" name="danceability" id="search-danceability" value="Low - High">	
 				</div>
-				<div class="fieldcontain playlistonly" >
+				<div class="fieldcontain playlistonly" title="Minimum song tempo of all playlist songs, measured in beats per minute.">
 					<label for="search-mintempo">Min song tempo (bpm)</label>
 					<input type="text" name="mintempo" id="search-mintempo" value="">
 				</div>
-				<div class="fieldcontain playlistonly" >
+				<div class="fieldcontain playlistonly" title="Maximum song tempo of all playlist songs, measured in beats per minute.">
 					<label for="search-maxtempo">Max song tempo (bpm)</label>
 					<input type="text" name="maxtempo" id="search-maxtempo" value="">
 				</div>
-				<div class="fieldcontain" >
+				<div class="fieldcontain" title="Number of songs in the generated playlist.">
 					<label for="search-results">Results</label>
 					<select name="results" id="search-results">
 					   <option value="100">100</option>
@@ -146,14 +141,14 @@
 					   <option value="20">20</option>
 					</select>
 				</div>
-				<div class="fieldcontain hideonplaylist inactive" >
+				<div class="fieldcontain hideonplaylist inactive" title="How the generated playlist is sorted.">
 					<label for="search-sortby">Sort by</label>
 					<select name="sortby" id="search-sortby">
 					   <option value="hotness">Hotness</option>
 					   <option value="familiarity">Familiarity</option>
 					</select>
 				</div>
-				<div class="fieldcontain playlistonly" >
+				<div class="fieldcontain playlistonly" title="How the generated playlist is sorted.">
 					<label for="search-sortbyplaylist">Sort by</label>
 					<select name="sortbyplaylist" id="search-sortbyplaylist">
 					   <option value="random">Random</option>
@@ -223,7 +218,7 @@
 		</div>
 	</div>
 	<div id="permafooter">
-		<h3>&copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
+		<h3>Spotify consumption with the power of EchoNest. &copy; 2012 <a href="http://www.nickschaden.com/">Nick Schaden</a>. Powered by <a href="http://the.echonest.com/">The Echonest</a>, <a href="http://spotify.com/">Spotify</a> and lots of coffee.</h3>  
 	</div>
 	<form id="save-csv" name="export" action="save-csv.php" method="post">
 		<input type="hidden" value="" name="csv">

@@ -2,7 +2,7 @@
 
 A web app that utilizes the power of EchoNest's flexible API to discover cool new artists and new playlists, primarily for use back on Spotify.
 
-Version: 0.8 (beta)
+Version: 0.85 (beta)
 Original Author: Nick Schaden
 http://nickschaden.com
 
